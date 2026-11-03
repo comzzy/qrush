@@ -4,7 +4,7 @@ import Link from "next/link";
 import { use, useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { api, ApiError } from "@/lib/api";
 import { BASESCAN, shortAddress, usd } from "@/lib/format";
 import type { Receipt } from "@/lib/types";
 import { Skeleton } from "@/components/ui";
@@ -30,7 +30,7 @@ export default function ReceiptPage({
   const { data, isLoading, error } = useQuery({
     queryKey: ["receipt", id],
     queryFn: () => api<Receipt>(`/receipts/${id}`, { auth: false }),
-    retry: 1,
+    retry: (n, e) => !(e instanceof ApiError && e.status === 404) && n < 1,
   });
   // The private order id comes from this browser, or from the tracking link the buyer saved.
   const [orderId, setOrderId] = useState<string | null>(null);
