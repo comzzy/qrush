@@ -1,84 +1,113 @@
 # QRush
 
-QRush lets a shop take payment in digital dollars with a QR code, and the money goes straight to the shop's own wallet.
+QRush is a QR and pay-link checkout on Base. Customers pay with crypto; sellers receive USDC.
+
+[![Live app](https://img.shields.io/badge/app-qrushpay.vercel.app-0052FF)](https://qrushpay.vercel.app)
+[![Contract on Basescan](https://img.shields.io/badge/Basescan-verified%20contract-2ea44f)](https://basescan.org/address/0x6E41C4C993f0C2967eB9F8a3B27E9AD1E0dDb12e)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
+- Live app: https://qrushpay.vercel.app
+- Contract (verified): [`0x6E41C4C993f0C2967eB9F8a3B27E9AD1E0dDb12e`](https://basescan.org/address/0x6E41C4C993f0C2967eB9F8a3B27E9AD1E0dDb12e)
 
 ## The problem
 
-Say you run a small shop in Lagos. Some of your customers would like to pay you in crypto. Taking it usually means you need to know about wallets, networks and exchange rates. If a customer sends the wrong coin, you may end up holding something whose price moves every hour. Most small shops decide it isn't worth the trouble.
+- Accepting crypto requires knowledge of wallets, networks and tokens that most small sellers do not have.
+- Customers hold different tokens, and volatile tokens expose the seller to price changes.
+- Printed QR codes and shared links can be swapped or edited to redirect payments.
 
-## What QRush does
+## The solution
 
-QRush gives your shop a page and a QR code. A customer scans it and pays. Whatever they pay with, you get USDC, a digital dollar that stays at $1. The payment goes straight to your wallet. QRush never holds your money.
+- One QR code or pay link per product or amount, created in a few minutes.
+- The buyer pays in USDC or ETH; the seller always receives the exact price in USDC.
+- Payments go directly from the buyer to the seller's wallet through a public contract. QRush never holds funds.
+- Amounts and recipients are fixed by the contract and the server, not by the link.
 
-## For sellers
+## How it works
 
-1. Open https://qrushpay.vercel.app/app.
-2. Choose how to sign in. "Passkey wallet" is the easiest. It uses your phone's fingerprint or face unlock, and you don't have to write down any words. You can also use a wallet app you already have.
-3. Create your shop with its name and city.
-4. Add your products. Type them in, or take a photo of your price list and QRush will fill them in for you. Check them before you save.
-5. Register your shop on Base. You only do this once. It needs a tiny amount of ETH in your wallet for the network fee (about $0.20 is more than enough). The dashboard shows your address and a QR code so you can top it up.
-6. Make a pay link for a product or an amount. Print its QR code, or share the link on WhatsApp or anywhere else.
-7. When someone pays, it shows up on your dashboard with a receipt.
+**Seller**
 
-### Orders and delivery
+1. Open https://qrushpay.vercel.app/app and sign in with a passkey wallet or an existing wallet.
+2. Create a shop with a name and city.
+3. Add products by typing them or by uploading a photo of a price list, then review them.
+4. Register the shop on Base once. This needs a small amount of ETH for the network fee.
+5. Create a pay link, then print its QR code or share the link.
+6. Track payments, orders and receipts on the dashboard.
 
-On **Products**, tap **Checkout** on a product and pick how the buyer gets it:
+**Buyer**
 
-- **In person**: shops, food, salons. The buyer gets an order code and a QR. On **Orders**, type or scan it and tap **Mark collected**.
-- **Delivery**: the buyer gives an address and phone. Mark it **Shipped** (add tracking if you like), then **Delivered**.
-- **Booking (services)**: salons, repairs, lessons. The buyer picks a date and time. Mark it **Confirmed**, then **Done**.
-- **Digital**: tick "I own the rights to sell this" and upload a file (up to 50 MB, PDF or EPUB for ebooks) or paste a link.
+1. Scan the QR code or open the pay link.
+2. Check the shop details and verification panel on the pay page.
+3. Connect a wallet and pay with USDC or ETH.
+4. Receive a receipt with an order code, order status and, for digital products, the download.
 
-Each type asks the buyer for sensible details (name, phone, address and so on). Change any of them to off, optional or required. Only you see the answers, on **Orders** and **Receipts**.
+## Features
 
-Digital files are private. After the payment is checked on Base, the buyer gets a download link that expires and works 5 times per order, and can read PDFs in the browser. Each PDF copy is stamped with the buyer's name or email, order code and date, so a leaked copy can be traced. A file that another shop already sells can't be uploaded again, and your first upload is timestamped as proof. Buyers can report a product from its pay page. None of this can stop a determined copier completely, but it makes copying harder and traceable.
+- **USDC or ETH payments.** ETH is swapped to USDC on Uniswap v3 in the same transaction (exact output, with a deadline and a maximum input; unused input is refunded).
+- **Passkey wallet.** Sign in with fingerprint or face unlock. No seed phrase.
+- **Split payments.** Divide each payment between several wallets, for example 70% to the seller and 30% to a supplier.
+- **Onchain receipts and loyalty.** Every payment emits a receipt event. Sellers can set a discount for repeat customers in the contract.
+- **Shop setup from a photo.** Upload a photo of a price list to fill in products.
+- **Basename links.** Shops can be shown and shared by their Basename.
+- **Live payments map.** Payments appear on a live map by shop city.
+- **Order types.** In person (order code and QR for collection), delivery (address, shipped, delivered), booking (date and time, confirmed, done) and digital.
+- **Buyer details.** For each order type, the seller sets every field (name, phone, address and others) to off, optional or required. Only the seller can see the answers.
+- **Digital delivery.** Private files up to 50 MB (PDF or EPUB) or an external link, released after the payment is verified on Base. PDFs can be read in the browser.
+- **Anti-theft for digital products.**
+  - File fingerprint: a file already sold by another shop cannot be uploaded again, and the first upload is timestamped.
+  - Each PDF copy is stamped with the buyer's name or email, order code and date.
+  - Signed download links expire and work up to 5 times per order.
+  - Sellers confirm ownership with an "I own the rights to sell this" tick.
+  - Buyers can report a product from its pay page.
 
-You can also split each payment between partners (for example 70% to you, 30% to a supplier), and give repeat customers a discount.
+## Security
 
-## For buyers
+- **Edited links cannot change the amount or recipient.** Invoice IDs are signed by the seller (EIP-712), and amounts are stored in the contract. The price and seller always come from the contract and the server, never from the URL.
+- **Protection against fake stickers.** The pay page shows a verification panel with the domain, shop name, Basename, seller wallet and QRush contract. A "Verified shop" badge appears only when the shop is registered in the QRush contract on Base.
+- **Wallet-step guard.** The pay page refuses to send any wallet request that does not target the QRush contract.
+- **Security headers.** HSTS and a Content Security Policy are set on every page.
+- **Server-side verification.** The server confirms each payment on Base before it marks an order paid or releases a file.
 
-1. Scan the shop's QR code with your phone camera, or open the link they sent you.
-2. Connect your wallet.
-3. Pay with USDC, ETH or another common token. If it isn't USDC, it is swapped to USDC in the same payment, so the shop gets the exact price.
-4. You get a receipt you can open again later. It shows your order code and progress, and your file if you bought a digital product. Keep the tracking link to check it from another device.
+No system can fully prevent piracy of digital files. The measures above make copying harder and make leaked copies traceable to an order.
 
-### Staying safe when you scan
+## Fees
 
-A QR sticker can be swapped, so check the pay page before you pay:
+- QRush charges no platform fee.
+- Buyers pay a small Base network fee in ETH for each payment. Sellers pay the same type of fee once to register their shop.
+- The platform does not sponsor gas.
 
-- The address bar says **qrushpay.vercel.app**. If it shows anything else, stop.
-- The page shows the shop name, its Basename if it has one, the seller wallet and the QRush contract. A **Verified shop** badge appears only when the shop is registered in the QRush contract on Base.
-- Your wallet should ask you to approve the same amount to the same contract.
+## Try it
 
-The price and the seller always come from the QRush server and the contract, never from the link, so editing a link cannot change who gets paid or how much. The page also refuses to send any wallet step that does not go to the QRush contract. Payments are checked on Base by the server, and download links are signed and expire.
+1. Open https://qrushpay.vercel.app/app and create a shop with a passkey wallet.
+2. Add one product and register the shop on Base.
+3. Create a pay link, open it on a second device and pay with USDC.
+4. Open the receipt and see the payment on the seller dashboard.
 
-## What it costs
+## Tech stack
 
-QRush charges no fee. Each payment costs a small Base network fee, paid by whoever sends it (usually under one cent). Sellers pay the same kind of fee once, to register their shop.
+| Layer | Technology |
+| --- | --- |
+| Smart contract | Solidity, Foundry, OpenZeppelin, Uniswap v3 |
+| Network | Base mainnet, USDC |
+| API | TypeScript, Hono, viem, SQLite with drizzle-orm, pdf-lib |
+| Web | Next.js 16, React 19, wagmi, viem, Tailwind CSS 4, pdf.js |
+| Tests | Foundry (unit and Base fork), Vitest, Playwright |
+| Hosting | Vercel (web app serves the API under `/api`) |
 
-## Questions
+## Architecture
 
-**Do I need crypto experience?**
-No. With a passkey wallet you sign in with your fingerprint or face. The only crypto step is adding a little ETH to your wallet once to pay network fees.
-
-**What is USDC?**
-A digital dollar. One USDC is meant to be worth one US dollar, so your takings don't go up and down like other crypto.
-
-**What is Base?**
-The network the payments run on. It is fast and very cheap to use, which is why the fees are fractions of a cent.
-
-**Is my money safe?**
-Payments go from the buyer straight to your wallet through a public contract. QRush can't hold, freeze or move your money. Look after your wallet and its passkey, because whoever controls it controls the funds.
-
-**Do I need a seed phrase?**
-Not with the passkey wallet. It is tied to your device's passkey. If you use another wallet app, that app's usual backup rules apply.
-
-## Links
-
-- App: https://qrushpay.vercel.app
-- Contract on Basescan (verified): [0x6E41C4C993f0C2967eB9F8a3B27E9AD1E0dDb12e](https://basescan.org/address/0x6E41C4C993f0C2967eB9F8a3B27E9AD1E0dDb12e)
-
----
+```mermaid
+flowchart LR
+    Buyer[Buyer wallet] -->|scan QR / open link| Web[Next.js web app]
+    Seller[Seller dashboard] --> Web
+    Web -->|/api| API[Hono API]
+    API --> DB[(SQLite)]
+    Web -->|pay / register| Contract[QRushCheckout on Base]
+    Contract -->|ETH to USDC| Uni[Uniswap v3]
+    Contract -->|USDC| SellerWallet[Seller and split wallets]
+    Contract -->|receipt events| Indexer[API indexer]
+    Indexer --> API
+    API -->|signed, expiring downloads| Buyer
+```
 
 ## For developers
 
@@ -90,13 +119,11 @@ api/         TypeScript API (Hono, viem, SQLite + drizzle): sign-in, shops, invo
 web/         Next.js app: landing page, seller dashboard, pay page, receipts, live map
 ```
 
-In production the web app serves the API under `/api`, so one Vercel project runs both.
+The contract handles seller registration, payout splits, invoices and pay links (including EIP-712 signed ones), and payments in USDC, ETH or ERC20.
 
-The contract handles seller registration, payout splits, invoices and pay links (including EIP-712 signed ones), and payments in USDC, ETH or ERC20. Non-USDC payments are exact-output swaps on Uniswap v3 with a deadline and a max input, and unused input is refunded. Every payment emits a receipt event that the API indexes.
+### Run locally
 
-### Setup
-
-You need Node 24, pnpm and [Foundry](https://book.getfoundry.sh/).
+Requirements: Node 24, pnpm and [Foundry](https://book.getfoundry.sh/).
 
 ```bash
 git clone https://github.com/comzzy/qrush.git && cd qrush
@@ -115,9 +142,17 @@ pnpm --filter qrush-api dev   # API on port 8787
 pnpm --filter qrush-web dev   # web on port 3000
 ```
 
-Don't commit `.env` files or keys. They are already in `.gitignore`.
+Do not commit `.env` files or keys. They are listed in `.gitignore`.
 
-### Tests
+### Deploy the contract
+
+```bash
+cd contracts
+source .env     # BASE_RPC_URL, BASESCAN_API_KEY, DEPLOYER_PRIVATE_KEY
+./deploy-base.sh
+```
+
+## Tests
 
 ```bash
 cd contracts && forge test                    # contract unit tests
@@ -126,21 +161,19 @@ pnpm --filter qrush-api test                  # API tests
 pnpm --filter qrush-web e2e                   # browser tests
 ```
 
-### Deploying the contract
-
-```bash
-cd contracts
-source .env     # BASE_RPC_URL, BASESCAN_API_KEY, DEPLOYER_PRIVATE_KEY
-./deploy-base.sh
-```
-
 ### Known limits
 
-- Paying in ETH for a signed invoice that isn't published yet takes two transactions from a normal wallet. Smart wallets do it in one.
-- Prices are in USDC. Photo-imported price lists in other currencies are flagged, not saved.
-- Buyer emails and WhatsApp messages aren't sent automatically. Sellers get one-tap email and WhatsApp links instead.
-- File fingerprints are stored off-chain; the contract has no registry for them. EPUB copies are limited and fingerprinted but not stamped.
-- SQLite is single-node. Run one API instance per database file.
+- Paying in ETH for a signed invoice that is not yet published takes two transactions from a standard wallet. Smart wallets need one.
+- Prices are in USDC. Imported price lists in other currencies are flagged, not saved.
+- File fingerprints are stored off-chain.
+- SQLite runs on a single node. Run one API instance per database file.
+
+## Roadmap
+
+- Automatic buyer notifications by email and WhatsApp (today sellers use one-tap email and WhatsApp links).
+- Buyer stamping for EPUB files.
+- An onchain registry for file fingerprints.
+- Multi-instance database support for the API.
 
 ## License
 
