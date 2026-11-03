@@ -43,7 +43,7 @@ QRush is a QR and pay-link checkout on Base. Customers pay with crypto; sellers 
 ## Features
 
 - **USDC or ETH payments.** ETH is swapped to USDC on Uniswap v3 in the same transaction (exact output, with a deadline and a maximum input; unused input is refunded).
-- **Passkey wallet.** Sign in with fingerprint or face unlock. No seed phrase.
+- **Passkey wallet.** Sign in with fingerprint or face recognition. No seed phrase.
 - **Split payments.** Divide each payment between several wallets, for example 70% to the seller and 30% to a supplier.
 - **Onchain receipts and loyalty.** Every payment emits a receipt event. Sellers can set a discount for repeat customers in the contract.
 - **Shop setup from a photo.** Upload a photo of a price list to fill in products.
