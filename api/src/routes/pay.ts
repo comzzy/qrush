@@ -46,13 +46,23 @@ export const payRoutes = new Hono<AppEnv>()
         .run();
     }
     const shop = deps.db.select().from(shops).where(eq(shops.id, row.shopId)).get()!;
-    const onchain = await onchainInvoice(deps, row.invoiceKey as Hex);
+    const [onchain, registry] = await Promise.all([
+      onchainInvoice(deps, row.invoiceKey as Hex),
+      deps.client.readContract({
+        address: deps.config.CHECKOUT_ADDRESS,
+        abi: qrushCheckoutAbi,
+        functionName: "getSeller",
+        args: [row.seller as Address],
+      }),
+    ]);
     const payable =
       (row.status === "signed" && onchain.status === "none") || (onchain.status === "open" && row.status !== "cancelled");
     return c.json({
       invoice: serializeInvoice(deps, row),
       shop: { id: shop.id, name: shop.name, slug: shop.slug, city: shop.city, country: shop.country },
       onchain,
+      // Read from the contract's seller registry, never from the link. The pay page shows the badge only when this is true.
+      sellerRegistry: { registered: registry.registered, name: registry.name },
       payable,
       checkout: deps.config.CHECKOUT_ADDRESS,
       chainId: deps.config.CHAIN_ID,

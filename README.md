@@ -42,6 +42,16 @@ You can also split each payment between partners (for example 70% to you, 30% to
 3. Pay with USDC, ETH or another common token. If it isn't USDC, it is swapped to USDC in the same payment, so the shop gets the exact price.
 4. You get a receipt you can open again later. It shows your order code and progress, and your file if you bought a digital product. Keep the tracking link to check it from another device.
 
+### Staying safe when you scan
+
+A QR sticker can be swapped, so check the pay page before you pay:
+
+- The address bar says **qrushpay.vercel.app**. If it shows anything else, stop.
+- The page shows the shop name, its Basename if it has one, the seller wallet and the QRush contract. A **Verified shop** badge appears only when the shop is registered in the QRush contract on Base.
+- Your wallet should ask you to approve the same amount to the same contract.
+
+The price and the seller always come from the QRush server and the contract, never from the link, so editing a link cannot change who gets paid or how much. The page also refuses to send any wallet step that does not go to the QRush contract. Payments are checked on Base by the server, and download links are signed and expire.
+
 ## What it costs
 
 QRush charges no fee. Each payment costs a small Base network fee, paid by whoever sends it (usually under one cent). Sellers pay the same kind of fee once, to register their shop.

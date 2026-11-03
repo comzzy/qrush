@@ -285,6 +285,16 @@ describe("QRush API end to end on a Base mainnet fork", () => {
     expect(view.payable).toBe(true);
     expect(view.onchain.status).toBe("none");
     expect(view.shop.name).toBe("Mama Put Kitchen");
+    expect(view.sellerRegistry.registered).toBe(true);
+    expect(view.checkout.toLowerCase()).toBe(h.config.CHECKOUT_ADDRESS.toLowerCase());
+
+    // Extra query values on the pay link change nothing: the price and payee come from the database and the contract.
+    const tampered = await api<{ amountDue: string; calls: Tx[] }>(
+      `/pay/${invoice.invoiceKey}/checkout?buyer=${buyerAccount.address}&token=usdc&amount=0.01&seller=${buyerAccount.address}&recipient=${buyerAccount.address}`,
+    );
+    expect(tampered.status).toBe(200);
+    expect(tampered.body.amountDue).toBe("12.25");
+    for (const call of tampered.body.calls) expect([h.config.CHECKOUT_ADDRESS.toLowerCase(), BASE.USDC.toLowerCase()]).toContain(call.to.toLowerCase());
   });
 
   it("pays in USDC (publish + pay in one multicall), indexes it, and streams it live", async () => {

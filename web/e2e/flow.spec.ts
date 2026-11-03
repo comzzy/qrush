@@ -73,6 +73,14 @@ test.describe.serial("seller to buyer", () => {
     await page.goto(payPath);
     await expect(page.getByTestId("pay-shop")).toHaveText("Mama Put Kitchen");
     await expect(page.getByTestId("pay-amount")).toHaveText("$11.00");
+    await expect(page.getByTestId("verified-badge")).toBeVisible();
+    await expect(page.getByTestId("trust-seller")).toHaveText(SELLER);
+    await expect(page.getByTestId("trust-domain")).toHaveText(new URL(page.url()).host);
+    await expect(page.getByTestId("trust-warning")).toHaveCount(0);
+    // Query values on a pay link are ignored; price and payee come from the server and the contract.
+    await page.goto(`${payPath}?amount=0.01&seller=${BUYER}&recipient=${BUYER}&token=0x0000000000000000000000000000000000000001`);
+    await expect(page.getByTestId("pay-amount")).toHaveText("$11.00");
+    await expect(page.getByTestId("trust-seller")).toHaveText(SELLER);
     await page.getByRole("button", { name: /Test wallet/ }).click();
     await expect(page.getByTestId("wallet-address").first()).toHaveText(`${BUYER.slice(0, 6)}…${BUYER.slice(-4)}`);
     await page.getByTestId("token-usdc").click();

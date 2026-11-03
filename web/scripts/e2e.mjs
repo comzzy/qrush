@@ -57,6 +57,7 @@ const env = {
   RPC_URL: rpcUrl,
   RPC_FALLBACK_URLS: "none",
   CHECKOUT_ADDRESS: receipt.contractAddress,
+  NEXT_PUBLIC_CHECKOUT_ADDRESS: receipt.contractAddress,
   CHECKOUT_DEPLOY_BLOCK: receipt.blockNumber.toString(),
   SIWE_DOMAIN: `localhost:${WEB_PORT}`,
   PUBLIC_BASE_URL: `http://localhost:${WEB_PORT}/api`,

@@ -108,6 +108,7 @@ export type PayView = {
   invoice: Invoice;
   shop: Pick<Shop, "id" | "name" | "slug" | "city" | "country">;
   onchain: { status: "none" | "open" | "completed" | "cancelled"; uses: number };
+  sellerRegistry: { registered: boolean; name: string };
   payable: boolean;
   checkout: Address;
   chainId: number;

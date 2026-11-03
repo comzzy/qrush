@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useQuery } from "@tanstack/react-query";
 import { useBalance, useConnection, useReadContract } from "wagmi";
 import { erc20Abi, formatEther, formatUnits, type Hex } from "viem";
 import { api, ApiError } from "@/lib/api";
 import { errorText, sendBatchOrSequential } from "@/lib/tx";
+import { assertSafeCalls, CHECKOUT_ADDRESS, PAY_HOSTS } from "@/lib/guard";
 import { BASESCAN, shortAddress, usd } from "@/lib/format";
 import type { BuyerDetails, Checkout, PayView, RawPayment } from "@/lib/types";
 import {
@@ -172,6 +173,8 @@ function PayCard({
         `/pay/${invoiceKey}/orders`,
         { auth: false, json: { details } },
       );
+      assertSafeCalls(quote.data.calls);
+      assertSafeCalls(quote.data.transactions);
       const hash = await sendBatchOrSequential(
         quote.data.calls,
         quote.data.transactions,
@@ -242,6 +245,7 @@ function PayCard({
         <Sparkle className="absolute top-5 right-6" size={22} />
       </div>
       <div className="space-y-4 p-6">
+        <TrustPanel view={view} basename={basename} />
         {invoice.items.length > 0 && (
           <ul className="space-y-1 text-sm">
             {invoice.items.map((it, i) => (
@@ -420,6 +424,61 @@ function PayCard({
         <ReportProduct invoiceKey={invoiceKey} />
       </div>
     </motion.div>
+  );
+}
+
+/** What a buyer should check before paying: the site, the shop, and where the money goes. All of it comes from the server and the contract, none from the link. */
+function TrustPanel({ view, basename }: { view: PayView; basename: string | null }) {
+  const host = useSyncExternalStore(
+    () => () => {},
+    () => window.location.host,
+    () => null,
+  );
+  const trustedHost = host === null || PAY_HOSTS.includes(host) || /^(localhost|127\.0\.0\.1)(:\d+)?$/.test(host);
+  const contractOk = view.checkout.toLowerCase() === CHECKOUT_ADDRESS.toLowerCase();
+  const verified = view.sellerRegistry.registered && contractOk;
+  return (
+    <div className="space-y-2 rounded-xl border-2 border-ink/15 p-3 text-sm" data-testid="trust-panel">
+      {(!trustedHost || !contractOk) && (
+        <p className="rounded-lg bg-pink-deep/20 p-2 font-semibold" role="alert" data-testid="trust-warning">
+          Warning: this page is not on {PAY_HOSTS[0]} or points at an unknown contract. Do not pay.
+        </p>
+      )}
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-ink-soft">Website</span>
+        <span className="font-mono font-semibold" data-testid="trust-domain">{host ?? PAY_HOSTS[0]}</span>
+      </div>
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-ink-soft">Shop</span>
+        <span className="flex items-center gap-2 font-semibold">
+          {view.sellerRegistry.name || view.shop.name}
+          {verified ? (
+            <span className="rounded-full bg-mint px-2 py-0.5 text-xs font-bold" data-testid="verified-badge">✓ Verified shop</span>
+          ) : (
+            <span className="rounded-full bg-cream px-2 py-0.5 text-xs" data-testid="unverified">Not registered onchain</span>
+          )}
+        </span>
+      </div>
+      {basename && (
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-ink-soft">Basename</span>
+          <span className="font-semibold" data-testid="trust-basename">{basename}</span>
+        </div>
+      )}
+      <div className="flex items-start justify-between gap-2">
+        <span className="text-ink-soft">Seller wallet</span>
+        <a href={`${BASESCAN}/address/${view.invoice.seller}`} target="_blank" rel="noreferrer" className="break-all text-right font-mono text-xs underline" data-testid="trust-seller">
+          {view.invoice.seller}
+        </a>
+      </div>
+      <div className="flex items-start justify-between gap-2">
+        <span className="text-ink-soft">Contract</span>
+        <a href={`${BASESCAN}/address/${view.checkout}`} target="_blank" rel="noreferrer" className="break-all text-right font-mono text-xs underline" data-testid="trust-contract">
+          {view.checkout}
+        </a>
+      </div>
+      <p className="text-xs text-ink-soft">Your wallet should ask you to approve exactly this amount to the contract above.</p>
+    </div>
   );
 }
 
