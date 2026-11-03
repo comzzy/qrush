@@ -1,0 +1,39 @@
+# dependencies & builds
+node_modules/
+dist/
+.next/
+out/
+build/
+*.tsbuildinfo
+web/next-env.d.ts
+.vercel/
+
+# env & secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+secrets/
+*.secret
+*.sqlite
+*.db
+*.db-shm
+*.db-wal
+
+# foundry (broadcast can contain RPC details)
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+contracts/lib/
+
+# tests & local artifacts
+web/test-results/
+web/playwright-report/
+web/drizzle/
+screens/
+web/shot.mjs
+web/AGENTS.md
+scratch/
+api/aitest.mjs

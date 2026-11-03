@@ -1,0 +1,12 @@
+{
+  "name": "qrush",
+  "private": true,
+  "packageManager": "pnpm@11.11.0",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "pnpm --filter qrush-api build && pnpm --filter qrush-web build",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint"
+  }
+}
