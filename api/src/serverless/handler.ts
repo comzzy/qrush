@@ -2,7 +2,8 @@ import { createApp } from "../app.js";
 import { createChainClient } from "../chain.js";
 import { loadConfig, type Config } from "../config.js";
 import type { Deps } from "../context.js";
-import { openMemoryDb, type MemoryDb } from "../db/client.js";
+import { openMemoryDb, snapshotNeedsMigration, type MemoryDb } from "../db/client.js";
+import type { FileStore } from "../services/files.js";
 import { PaymentBus } from "../events.js";
 import { CheckoutIndexer } from "../services/indexer.js";
 import type { SnapshotStore } from "./snapshot.js";
@@ -20,6 +21,8 @@ export type ServerlessOptions = {
   /** Upper bound on blocks scanned in one request-triggered sync. */
   syncMaxBlocks?: bigint;
   fetch?: typeof fetch;
+  /** Private storage for digital products sold through checkout. */
+  files?: FileStore;
 };
 
 const SYNC_PATHS = [/^\/pay\/[^/]+(\/receipts)?$/, /^\/receipts\b/, /^\/feed\/recent$/, /^\/invoices\b/, /^\/loyalty\b/];
@@ -64,7 +67,7 @@ export function createServerlessHandler(opts: ServerlessOptions = {}) {
   function mount(next: MemoryDb) {
     mem?.close();
     mem = next;
-    deps = { config, db: next.db, client, bus, fetch: opts.fetch ?? fetch };
+    deps = { config, db: next.db, client, bus, fetch: opts.fetch ?? fetch, files: opts.files };
     indexer = new CheckoutIndexer({
       db: next.db,
       client,
@@ -88,6 +91,12 @@ export function createServerlessHandler(opts: ServerlessOptions = {}) {
     const current = await opts.store.version();
     if (mem && current === version) return;
     const snap = current ? await opts.store.load() : null;
+    if (snap && opts.store.backup && snapshotNeedsMigration(snap.bytes)) {
+      // Never migrate production data without a copy of what was there before.
+      const label = `pre-migration-${new Date().toISOString().replace(/[:.]/g, "-")}`;
+      const where = await opts.store.backup(snap.bytes, label);
+      console.log(`snapshot backed up to ${where} before migrating`);
+    }
     mount(openMemoryDb(snap?.bytes));
     version = snap?.version ?? null;
   }

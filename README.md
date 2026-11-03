@@ -20,6 +20,19 @@ QRush gives your shop a page and a QR code. A customer scans it and pays. Whatev
 6. Make a pay link for a product or an amount. Print its QR code, or share the link on WhatsApp or anywhere else.
 7. When someone pays, it shows up on your dashboard with a receipt.
 
+### Orders and delivery
+
+On **Products**, tap **Checkout** on a product and pick how the buyer gets it:
+
+- **In person**: shops, food, salons. The buyer gets an order code and a QR. On **Orders**, type or scan it and tap **Mark collected**.
+- **Delivery**: the buyer gives an address and phone. Mark it **Shipped** (add tracking if you like), then **Delivered**.
+- **Booking**: the buyer picks a date and time. Mark it **Confirmed**, then **Done**.
+- **Digital**: tick "I own the rights to sell this" and upload a file (up to 50 MB, PDF or EPUB for ebooks) or paste a link.
+
+Each type asks the buyer for sensible details (name, phone, address and so on). Change any of them to off, optional or required. Only you see the answers, on **Orders** and **Receipts**.
+
+Digital files are private. After the payment is checked on Base, the buyer gets a download link that expires and works 5 times per order, and can read PDFs in the browser. Each PDF copy is stamped with the buyer's name or email, order code and date, so a leaked copy can be traced. A file that another shop already sells can't be uploaded again, and your first upload is timestamped as proof. Buyers can report a product from its pay page. None of this can stop a determined copier completely, but it makes copying harder and traceable.
+
 You can also split each payment between partners (for example 70% to you, 30% to a supplier), and give repeat customers a discount.
 
 ## For buyers
@@ -27,7 +40,7 @@ You can also split each payment between partners (for example 70% to you, 30% to
 1. Scan the shop's QR code with your phone camera, or open the link they sent you.
 2. Connect your wallet.
 3. Pay with USDC, ETH or another common token. If it isn't USDC, it is swapped to USDC in the same payment, so the shop gets the exact price.
-4. You get a receipt you can open again later.
+4. You get a receipt you can open again later. It shows your order code and progress, and your file if you bought a digital product. Keep the tracking link to check it from another device.
 
 ## What it costs
 
@@ -115,6 +128,8 @@ source .env     # BASE_RPC_URL, BASESCAN_API_KEY, DEPLOYER_PRIVATE_KEY
 
 - Paying in ETH for a signed invoice that isn't published yet takes two transactions from a normal wallet. Smart wallets do it in one.
 - Prices are in USDC. Photo-imported price lists in other currencies are flagged, not saved.
+- Buyer emails and WhatsApp messages aren't sent automatically. Sellers get one-tap email and WhatsApp links instead.
+- File fingerprints are stored off-chain; the contract has no registry for them. EPUB copies are limited and fingerprinted but not stamped.
 - SQLite is single-node. Run one API instance per database file.
 
 ## License

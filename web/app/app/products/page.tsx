@@ -11,6 +11,10 @@ import type { Product, Shop } from "@/lib/types";
 import { NeedShop } from "@/components/app/NeedShop";
 import { Notice, Skeleton, Spinner } from "@/components/ui";
 import { ReceiptSticker } from "@/components/art/Stickers";
+import {
+  ProductExtras,
+  ShopFieldsCard,
+} from "@/components/app/CheckoutSettings";
 
 export default function ProductsPage() {
   return <NeedShop>{(shop) => <Products shop={shop} />}</NeedShop>;
@@ -27,18 +31,24 @@ function Products({ shop }: { shop: Shop }) {
         ) : data?.length ? (
           <ul className="mt-4 space-y-2">
             <AnimatePresence initial={false}>
-              {data.map((p) => <ProductRow key={p.id} shop={shop} product={p} />)}
+              {data.map((p) => (
+                <ProductRow key={p.id} shop={shop} product={p} />
+              ))}
             </AnimatePresence>
           </ul>
         ) : (
           <div className="mt-6 flex flex-col items-center gap-3 py-6 text-center text-ink-soft">
             <ReceiptSticker size={80} />
-            <p>No products yet. Add your first one, or upload a photo of your menu or price list.</p>
+            <p>
+              No products yet. Add your first one, or upload a photo of your
+              menu or price list.
+            </p>
           </div>
         )}
       </div>
       <div className="space-y-6">
         <AddProduct shop={shop} />
+        <ShopFieldsCard key={shop.id} shop={shop} />
         <PhotoSetup shop={shop} />
       </div>
     </div>
@@ -48,6 +58,7 @@ function Products({ shop }: { shop: Shop }) {
 function ProductRow({ shop, product }: { shop: Shop; product: Product }) {
   const qc = useQueryClient();
   const [busy, setBusy] = useState(false);
+  const [open, setOpen] = useState(false);
   const mutate = async (fn: () => Promise<unknown>) => {
     setBusy(true);
     try {
@@ -58,20 +69,66 @@ function ProductRow({ shop, product }: { shop: Shop; product: Product }) {
     }
   };
   return (
-    <motion.li layout initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 12 }} className={`flex flex-wrap items-center gap-3 rounded-2xl border-2 border-ink bg-cream p-3 ${product.active ? "" : "opacity-60"}`}>
+    <motion.li
+      layout
+      initial={{ opacity: 0, x: -12 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 12 }}
+      className={`flex flex-wrap items-center gap-3 rounded-2xl border-2 border-ink bg-cream p-3 ${product.active ? "" : "opacity-60"}`}
+    >
       <div className="min-w-0 flex-1">
         <p className="truncate font-semibold">{product.name}</p>
-        {product.description && <p className="truncate text-sm text-ink-soft">{product.description}</p>}
+        {product.description && (
+          <p className="truncate text-sm text-ink-soft">
+            {product.description}
+          </p>
+        )}
       </div>
       <span className="font-bold">{usd(product.price)}</span>
-      <div className="flex gap-2">
-        <button type="button" disabled={busy} className="btn btn-cream !px-3 !py-1 text-sm" onClick={() => mutate(() => api(`/shops/${shop.id}/products/${product.id}`, { method: "PATCH", json: { active: !product.active } }))}>
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          aria-expanded={open}
+          className={`btn !px-3 !py-1 text-sm ${open ? "btn-sun" : "btn-cream"}`}
+          onClick={() => setOpen((o) => !o)}
+          data-testid="product-checkout-toggle"
+        >
+          {product.delivery ? "Delivery ✓" : "Checkout"}
+        </button>
+        <button
+          type="button"
+          disabled={busy}
+          className="btn btn-cream !px-3 !py-1 text-sm"
+          onClick={() =>
+            mutate(() =>
+              api(`/shops/${shop.id}/products/${product.id}`, {
+                method: "PATCH",
+                json: { active: !product.active },
+              }),
+            )
+          }
+        >
           {product.active ? "Hide" : "Show"}
         </button>
-        <button type="button" disabled={busy} aria-label={`Delete ${product.name}`} className="btn btn-pink !px-3 !py-1 text-sm" onClick={() => mutate(() => api(`/shops/${shop.id}/products/${product.id}`, { method: "DELETE" }))}>
+        <button
+          type="button"
+          disabled={busy}
+          aria-label={`Delete ${product.name}`}
+          className="btn btn-pink !px-3 !py-1 text-sm"
+          onClick={() =>
+            mutate(() =>
+              api(`/shops/${shop.id}/products/${product.id}`, {
+                method: "DELETE",
+              }),
+            )
+          }
+        >
           Delete
         </button>
       </div>
+      <AnimatePresence initial={false}>
+        {open && <ProductExtras key="extras" shop={shop} product={product} />}
+      </AnimatePresence>
     </motion.li>
   );
 }
@@ -88,7 +145,13 @@ function AddProduct({ shop }: { shop: Shop }) {
     setBusy(true);
     setError(null);
     try {
-      await api(`/shops/${shop.id}/products`, { json: { name: name.trim(), price, description: description.trim() || null } });
+      await api(`/shops/${shop.id}/products`, {
+        json: {
+          name: name.trim(),
+          price,
+          description: description.trim() || null,
+        },
+      });
       setName("");
       setPrice("");
       setDescription("");
@@ -103,19 +166,48 @@ function AddProduct({ shop }: { shop: Shop }) {
     <form onSubmit={submit} className="card space-y-3 p-5">
       <h3 className="text-lg font-bold">Add a product</h3>
       <div>
-        <label className="label" htmlFor="p-name">Name</label>
-        <input id="p-name" className="field" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Iced latte" />
+        <label className="label" htmlFor="p-name">
+          Name
+        </label>
+        <input
+          id="p-name"
+          className="field"
+          required
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Iced latte"
+        />
       </div>
       <div>
-        <label className="label" htmlFor="p-price">Price in USDC</label>
-        <input id="p-price" className="field" required inputMode="decimal" pattern="^\d+(\.\d{1,6})?$" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="4.50" />
+        <label className="label" htmlFor="p-price">
+          Price in USDC
+        </label>
+        <input
+          id="p-price"
+          className="field"
+          required
+          inputMode="decimal"
+          pattern="^\d+(\.\d{1,6})?$"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          placeholder="4.50"
+        />
       </div>
       <div>
-        <label className="label" htmlFor="p-desc">Description (optional)</label>
-        <input id="p-desc" className="field" value={description} onChange={(e) => setDescription(e.target.value)} />
+        <label className="label" htmlFor="p-desc">
+          Description (optional)
+        </label>
+        <input
+          id="p-desc"
+          className="field"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
       </div>
       {error && <Notice tone="error">{error}</Notice>}
-      <button type="submit" className="btn btn-ink w-full" disabled={busy}>{busy ? <Spinner /> : "Add product"}</button>
+      <button type="submit" className="btn btn-ink w-full" disabled={busy}>
+        {busy ? <Spinner /> : "Add product"}
+      </button>
     </form>
   );
 }
@@ -124,7 +216,10 @@ function PhotoSetup({ shop }: { shop: Shop }) {
   const qc = useQueryClient();
   const input = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState<{ tone: "ok" | "error" | "info"; text: string } | null>(null);
+  const [msg, setMsg] = useState<{
+    tone: "ok" | "error" | "info";
+    text: string;
+  } | null>(null);
   const upload = async (file: File) => {
     setBusy(true);
     setMsg(null);
@@ -132,12 +227,31 @@ function PhotoSetup({ shop }: { shop: Shop }) {
       const form = new FormData();
       form.set("image", await toPngOrJpeg(file));
       form.set("shopId", shop.id);
-      const res = await api<{ created: Product[]; products: unknown[]; requiresCurrencyConversion: boolean; currency: string | null }>("/ai/shop-setup", { method: "POST", body: form });
-      if (res.requiresCurrencyConversion) setMsg({ tone: "info", text: `Prices are in ${res.currency}. Add them manually in USDC.` });
-      else setMsg({ tone: "ok", text: `Added ${res.created.length} product${res.created.length === 1 ? "" : "s"} from your photo.` });
+      const res = await api<{
+        created: Product[];
+        products: unknown[];
+        requiresCurrencyConversion: boolean;
+        currency: string | null;
+      }>("/ai/shop-setup", { method: "POST", body: form });
+      if (res.requiresCurrencyConversion)
+        setMsg({
+          tone: "info",
+          text: `Prices are in ${res.currency}. Add them manually in USDC.`,
+        });
+      else
+        setMsg({
+          tone: "ok",
+          text: `Added ${res.created.length} product${res.created.length === 1 ? "" : "s"} from your photo.`,
+        });
       await qc.invalidateQueries({ queryKey: ["products", shop.id] });
     } catch (e) {
-      setMsg({ tone: "error", text: e instanceof ApiError && e.status === 503 ? "Photo import is not switched on for this server yet. Add products by hand for now." : errorText(e) });
+      setMsg({
+        tone: "error",
+        text:
+          e instanceof ApiError && e.status === 503
+            ? "Photo import is not switched on for this server yet. Add products by hand for now."
+            : errorText(e),
+      });
     } finally {
       setBusy(false);
       if (input.current) input.current.value = "";
@@ -146,12 +260,35 @@ function PhotoSetup({ shop }: { shop: Shop }) {
   return (
     <div className="card bg-sky/40 p-5">
       <h3 className="text-lg font-bold">Import from a photo</h3>
-      <p className="mt-1 text-sm text-ink-soft">Snap your menu or price board. QRush reads the item names and prices and adds them for you to check.</p>
-      <input ref={input} type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/heic,image/heif" className="sr-only" id="menu-photo" onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} />
-      <label htmlFor="menu-photo" className={`btn btn-cream mt-4 w-full cursor-pointer ${busy ? "pointer-events-none opacity-60" : ""}`}>
-        {busy ? <><Spinner /> Reading your photo…</> : "Choose a photo"}
+      <p className="mt-1 text-sm text-ink-soft">
+        Snap your menu or price board. QRush reads the item names and prices and
+        adds them for you to check.
+      </p>
+      <input
+        ref={input}
+        type="file"
+        accept="image/png,image/jpeg,image/webp,image/gif,image/heic,image/heif"
+        className="sr-only"
+        id="menu-photo"
+        onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])}
+      />
+      <label
+        htmlFor="menu-photo"
+        className={`btn btn-cream mt-4 w-full cursor-pointer ${busy ? "pointer-events-none opacity-60" : ""}`}
+      >
+        {busy ? (
+          <>
+            <Spinner /> Reading your photo…
+          </>
+        ) : (
+          "Choose a photo"
+        )}
       </label>
-      {msg && <div className="mt-3"><Notice tone={msg.tone}>{msg.text}</Notice></div>}
+      {msg && (
+        <div className="mt-3">
+          <Notice tone={msg.tone}>{msg.text}</Notice>
+        </div>
+      )}
     </div>
   );
 }
@@ -163,7 +300,9 @@ async function toPngOrJpeg(file: File): Promise<File> {
   try {
     bitmap = await createImageBitmap(file);
   } catch {
-    throw new Error("This browser can't read that image. Save it as JPEG or PNG and try again.");
+    throw new Error(
+      "This browser can't read that image. Save it as JPEG or PNG and try again.",
+    );
   }
   const canvas = document.createElement("canvas");
   canvas.width = bitmap.width;
@@ -173,7 +312,11 @@ async function toPngOrJpeg(file: File): Promise<File> {
   ctx.fillStyle = "#fff";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(bitmap, 0, 0);
-  const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, "image/jpeg", 0.9));
+  const blob = await new Promise<Blob | null>((r) =>
+    canvas.toBlob(r, "image/jpeg", 0.9),
+  );
   if (!blob) throw new Error("Could not convert the image");
-  return new File([blob], file.name.replace(/\.[^.]+$/, "") + ".jpg", { type: "image/jpeg" });
+  return new File([blob], file.name.replace(/\.[^.]+$/, "") + ".jpg", {
+    type: "image/jpeg",
+  });
 }

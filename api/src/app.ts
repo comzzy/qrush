@@ -1,3 +1,4 @@
+import { downloadRoutes, fileRoutes, orderDeskRoutes, orderRoutes } from "./routes/orders.js";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
@@ -26,6 +27,10 @@ export function createApp(deps: Deps, opts: { log?: boolean } = {}) {
   app.route("/shops", shopRoutes);
   app.route("/invoices", invoiceRoutes);
   app.route("/pay", payRoutes);
+  app.route("/pay", orderRoutes);
+  app.route("/downloads", downloadRoutes);
+  app.route("/orders", orderDeskRoutes);
+  app.route("/files", fileRoutes);
   app.route("/receipts", receiptRoutes);
   app.route("/loyalty", loyaltyRoutes);
   app.route("/basenames", basenameRoutes);

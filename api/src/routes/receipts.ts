@@ -7,6 +7,7 @@ import { qrushCheckoutAbi } from "../contracts/artifact.js";
 import { invoices, payments, payouts, shops } from "../db/schema.js";
 import { badRequest, notFound } from "../lib/errors.js";
 import { formatUsdc } from "../lib/money.js";
+import { checkoutExtras, orderForTx, orderStatusForTx } from "../services/checkoutExtras.js";
 
 export function buildReceipt(deps: Deps, receiptId: number) {
   const p = deps.db.select().from(payments).where(eq(payments.receiptId, receiptId)).get();
@@ -34,6 +35,9 @@ export function buildReceipt(deps: Deps, receiptId: number) {
     blockNumber: p.blockNumber,
     paidAt: new Date(p.blockTimestamp * 1000).toISOString(),
     geo: { latitude: p.latitude, longitude: p.longitude, city: p.city, country: p.country, source: p.geoSource },
+    /** Whether the buyer gets a download; the file itself is only reachable with a signed link. */
+    hasDelivery: invoice ? checkoutExtras(deps, invoice).deliveries.length > 0 : false,
+    orderStatus: orderStatusForTx(deps, p.txHash),
   };
 }
 
@@ -48,7 +52,14 @@ export const receiptRoutes = new Hono<AppEnv>()
       .orderBy(desc(payments.receiptId))
       .limit(limit)
       .all();
-    return c.json(rows.map((r) => buildReceipt(c.var.deps, r.receiptId)));
+    // Buyer details are private to the seller and are only ever attached here.
+    return c.json(
+      rows.map((r) => {
+        const receipt = buildReceipt(c.var.deps, r.receiptId)!;
+        const order = orderForTx(c.var.deps, receipt.txHash);
+        return { ...receipt, order, buyerDetails: order?.details ?? null };
+      }),
+    );
   })
   .get("/:receiptId", (c) => {
     const id = Number(c.req.param("receiptId"));

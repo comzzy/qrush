@@ -1,3 +1,4 @@
+import { checkoutExtras } from "../services/checkoutExtras.js";
 import { Hono, type Context } from "hono";
 import { eq, desc } from "drizzle-orm";
 import { encodeFunctionData, erc20Abi, getAddress, isAddress, isAddressEqual, type Address, type Hex } from "viem";
@@ -55,6 +56,10 @@ export const payRoutes = new Hono<AppEnv>()
       payable,
       checkout: deps.config.CHECKOUT_ADDRESS,
       chainId: deps.config.CHAIN_ID,
+      ...(() => {
+        const extra = checkoutExtras(deps, row);
+        return { buyerFields: extra.fields, fulfilment: extra.fulfilment, hasDelivery: extra.deliveries.length > 0 };
+      })(),
     });
   })
   .get("/:key/qr.png", (c) => qrResponse(c, "png"))

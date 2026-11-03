@@ -1,3 +1,4 @@
+import { BlobFileStore } from "./services/files.js";
 import { serve } from "@hono/node-server";
 import { createApp } from "./app.js";
 import { createChainClient } from "./chain.js";
@@ -26,7 +27,8 @@ const indexer = new CheckoutIndexer({
 });
 indexer.start();
 
-const app = createApp({ config, db, client, bus, fetch }, { log: true });
+const files = process.env.BLOB_READ_WRITE_TOKEN ? new BlobFileStore() : undefined;
+const app = createApp({ config, db, client, bus, fetch, files }, { log: true });
 const server = serve({ fetch: app.fetch, port: config.PORT }, (info) => {
   console.log(`RPC endpoints: ${config.rpcUrls.map((u) => new URL(u).host).join(", ")}`);
   console.log(`QRush API listening on :${info.port} (chain ${config.CHAIN_ID}, checkout ${config.CHECKOUT_ADDRESS})`);

@@ -1,5 +1,9 @@
 import { join } from "node:path";
-import { BlobSnapshotStore, createServerlessHandler } from "qrush-api/serverless";
+import {
+  BlobFileStore,
+  BlobSnapshotStore,
+  createServerlessHandler,
+} from "qrush-api/serverless";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -19,11 +23,26 @@ function apiHandler(): Handler {
     env.PAY_BASE_URL ??= `https://${host}/pay`;
     env.SIWE_DOMAIN ??= host;
   }
-  const store = env.BLOB_READ_WRITE_TOKEN ? new BlobSnapshotStore("qrush/state.sqlite") : undefined;
-  handler = createServerlessHandler({ env, store, basePath: "/api" }).handle;
+  const store = env.BLOB_READ_WRITE_TOKEN
+    ? new BlobSnapshotStore("qrush/state.sqlite")
+    : undefined;
+  const files = env.BLOB_READ_WRITE_TOKEN ? new BlobFileStore() : undefined;
+  handler = createServerlessHandler({
+    env,
+    store,
+    files,
+    basePath: "/api",
+  }).handle;
   return handler;
 }
 
 const handle = (req: Request) => apiHandler()(req);
 
-export { handle as GET, handle as POST, handle as PUT, handle as PATCH, handle as DELETE, handle as OPTIONS };
+export {
+  handle as GET,
+  handle as POST,
+  handle as PUT,
+  handle as PATCH,
+  handle as DELETE,
+  handle as OPTIONS,
+};

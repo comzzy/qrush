@@ -15,10 +15,12 @@
   "dependencies": {
     "@coinbase/wallet-sdk": "^4.4.0",
     "@tanstack/react-query": "^5.105.1",
+    "@vercel/blob": "2.8.2",
     "@walletconnect/ethereum-provider": "2.26.0",
     "d3-geo": "^3.1.1",
     "motion": "14.9.0",
     "next": "16.4.4",
+    "pdfjs-dist": "^6.5.438",
     "permissionless": "^0.5.2",
     "qrcode.react": "^4.2.0",
     "qrush-api": "workspace:*",

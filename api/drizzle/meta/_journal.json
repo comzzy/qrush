@@ -8,6 +8,13 @@
       "when": 1793695840847,
       "tag": "0000_magenta_the_order",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1793722399980,
+      "tag": "0001_checkout_orders",
+      "breakpoints": true
     }
   ]
 }

@@ -9,9 +9,10 @@ import { createChainClient } from "../src/chain.js";
 import { loadConfig } from "../src/config.js";
 import { openDb } from "../src/db/client.js";
 import { PaymentBus } from "../src/events.js";
+import type { FileStore } from "../src/services/files.js";
 import { CheckoutIndexer } from "../src/services/indexer.js";
 
-export async function startHarness(env: Record<string, string> = {}, fetchImpl: typeof fetch = fetch) {
+export async function startHarness(env: Record<string, string> = {}, fetchImpl: typeof fetch = fetch, files?: FileStore) {
   const dir = mkdtempSync(join(tmpdir(), "qrush-"));
   const server = await new Promise<ServerType>((resolve) => {
     const s = serve({ fetch: (req) => handler(req), port: 0 }, () => resolve(s));
@@ -34,7 +35,7 @@ export async function startHarness(env: Record<string, string> = {}, fetchImpl: 
   const { db, close } = openDb(config.DATABASE_PATH);
   const client = createChainClient(config);
   const bus = new PaymentBus();
-  const app = createApp({ config, db, client, bus, fetch: fetchImpl });
+  const app = createApp({ config, db, client, bus, fetch: fetchImpl, files });
   const handler = (req: Request) => app.fetch(req);
   const indexer = new CheckoutIndexer({
     db,

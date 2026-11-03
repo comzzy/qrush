@@ -5,6 +5,8 @@ export interface SnapshotStore {
   load(): Promise<{ bytes: Buffer; version: string } | null>;
   /** Write only if the stored version still equals `expected`. Returns the new version, or null on conflict. */
   save(bytes: Buffer, expected: string | null): Promise<string | null>;
+  /** Keep a copy of a snapshot before a migration touches it. Returns where it went. */
+  backup?(bytes: Buffer, label: string): Promise<string>;
 }
 
 export class MemorySnapshotStore implements SnapshotStore {
@@ -61,6 +63,19 @@ export class BlobSnapshotStore implements SnapshotStore {
     if (!res || res.statusCode !== 200 || !res.stream) return null;
     const bytes = Buffer.from(await new Response(res.stream).arrayBuffer());
     return { bytes, version: res.blob.etag };
+  }
+
+  async backup(bytes: Buffer, label: string) {
+    const { put } = await this.sdk();
+    const dir = this.pathname.replace(/[^/]+$/, "");
+    const out = await put(`${dir}backups/${label}.sqlite`, bytes, {
+      access: "private",
+      token: this.token,
+      addRandomSuffix: false,
+      allowOverwrite: true,
+      contentType: "application/vnd.sqlite3",
+    });
+    return out.pathname;
   }
 
   async save(bytes: Buffer, expected: string | null) {
