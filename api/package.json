@@ -1,0 +1,49 @@
+{
+  "name": "qrush-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "abi": "tsx scripts/export-abi.ts",
+    "db:generate": "drizzle-kit generate",
+    "test": "vitest run",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json && cp -r drizzle dist/drizzle"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.1.5",
+    "@vercel/blob": "2.8.2",
+    "@vercel/oidc": "^3.8.10",
+    "better-sqlite3": "^13.0.3",
+    "drizzle-orm": "^0.45.4",
+    "hono": "^4.13.16",
+    "permissionless": "^0.5.2",
+    "qrcode": "^1.5.4",
+    "tsx": "^4.23.15",
+    "viem": "^2.57.14",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/node": "^26.6.6",
+    "@types/qrcode": "^1.5.6",
+    "drizzle-kit": "^0.31.11",
+    "eslint": "^10.14.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^5.0.5"
+  },
+  "exports": {
+    "./serverless": {
+      "types": "./dist/src/serverless/index.d.ts",
+      "default": "./dist/src/serverless/index.js"
+    }
+  }
+}
