@@ -1,0 +1,47 @@
+{
+  "name": "qrush-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/copy-migrations.mjs && next dev",
+    "build": "node scripts/copy-migrations.mjs && next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "echo 'run pnpm e2e for browser tests'",
+    "e2e": "node scripts/e2e.mjs"
+  },
+  "dependencies": {
+    "@coinbase/wallet-sdk": "^4.4.0",
+    "@tanstack/react-query": "^5.105.1",
+    "@walletconnect/ethereum-provider": "2.26.0",
+    "d3-geo": "^3.1.1",
+    "motion": "14.9.0",
+    "next": "16.4.4",
+    "permissionless": "^0.5.2",
+    "qrcode.react": "^4.2.0",
+    "qrush-api": "workspace:*",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "topojson-client": "^3.1.0",
+    "viem": "^2.57.14",
+    "wagmi": "3.7.11",
+    "world-atlas": "^2.0.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/d3-geo": "^3.1.1",
+    "@types/geojson": "^7946.0.16",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/topojson-client": "^3.1.5",
+    "@types/topojson-specification": "^1.0.5",
+    "eslint": "^10.14.0",
+    "eslint-config-next": "^16.4.4",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3"
+  }
+}

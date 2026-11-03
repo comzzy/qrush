@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #fffbed;
+  --color-cream-deep: #fff3dc;
+  --color-grid: #f7e4cf;
+  --color-ink: #141414;
+  --color-ink-soft: #4a4540;
+  --color-pink: #ffb3ad;
+  --color-pink-deep: #f78f86;
+  --color-pink-soft: #ffd6d2;
+  --color-blush: #ffc6cb;
+  --color-sun: #f9d648;
+  --color-sun-deep: #e9b923;
+  --color-mint: #9fe0c3;
+  --color-sky: #a9d4ff;
+  --color-usdc: #2775ca;
+
+  --font-sans: var(--font-fredoka), ui-rounded, system-ui, sans-serif;
+  --font-script: var(--font-shrikhand), var(--font-fredoka), serif;
+
+  --radius-panel: 1.75rem;
+  --shadow-pop: 0 6px 0 0 var(--color-ink);
+  --shadow-pop-sm: 0 3px 0 0 var(--color-ink);
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-cream text-ink font-sans antialiased;
+    background-image:
+      linear-gradient(var(--color-grid) 1.5px, transparent 1.5px),
+      linear-gradient(90deg, var(--color-grid) 1.5px, transparent 1.5px);
+    background-size: 56px 56px;
+    background-position: -1px -1px;
+  }
+  ::selection {
+    background: var(--color-pink);
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-ink);
+    outline-offset: 3px;
+    border-radius: 12px;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border-2 border-ink px-5 py-2.5 text-base font-semibold whitespace-nowrap transition-[transform,box-shadow,background-color] duration-150 select-none disabled:cursor-not-allowed disabled:opacity-50;
+    box-shadow: var(--shadow-pop-sm);
+  }
+  .btn:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0 0 var(--color-ink);
+  }
+  .btn:not(:disabled):active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 0 var(--color-ink);
+  }
+  .btn-ink {
+    @apply bg-ink text-cream;
+    box-shadow: 0 3px 0 0 var(--color-pink-deep);
+  }
+  .btn-ink:not(:disabled):hover {
+    box-shadow: 0 5px 0 0 var(--color-pink-deep);
+  }
+  .btn-pink {
+    @apply bg-pink;
+  }
+  .btn-sun {
+    @apply bg-sun;
+  }
+  .btn-cream {
+    @apply bg-cream;
+  }
+  .card {
+    @apply rounded-[var(--radius-panel)] border-2 border-ink bg-white;
+    box-shadow: var(--shadow-pop);
+  }
+  .pill {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-blush px-4 py-1.5 text-sm font-medium;
+  }
+  .field {
+    @apply w-full min-w-0 rounded-2xl border-2 border-ink bg-white px-4 py-2.5 text-base placeholder:text-ink-soft/50 focus:bg-cream-deep focus:outline-none;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-semibold;
+  }
+  .script {
+    font-family: var(--font-script);
+    letter-spacing: 0.01em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@layer components {
+  .script-outline {
+    font-family: var(--font-script);
+    color: #fff;
+    -webkit-text-stroke: 0.09em var(--color-ink);
+    paint-order: stroke fill;
+    text-shadow: 0 0.08em 0 var(--color-ink);
+    letter-spacing: 0.02em;
+  }
+  .section {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
+  }
+  .h-display {
+    @apply font-bold tracking-tight text-balance;
+    line-height: 1.02;
+  }
+}
+
+.receipt-edge {
+  -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 18px 100%;
+  mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 18px 100%;
+  padding-bottom: 2.5rem;
+}
+
+@media print {
+  header, footer, nav, .no-print { display: none !important; }
+  body { background: #fff !important; }
+}
+
+/* Decorative stickers may poke past the edge; never let them widen the page on phones. */
+html, body { overflow-x: clip; }
