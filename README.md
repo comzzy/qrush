@@ -1,107 +1,109 @@
 # QRush
 
-**Take crypto payments with a QR code.** QRush lets a shop on Base set up a storefront in a couple of minutes, print a QR code or share a pay link, and get paid in USDC. Buyers can pay with USDC, ETH or most ERC20 tokens. Anything that isn't USDC is swapped to USDC in the same transaction, so the seller always receives dollars.
+QRush lets a shop take payment in digital dollars with a QR code, and the money goes straight to the shop's own wallet.
 
-**Live app:** https://qrushpay.vercel.app
-**Contract (verified):** [`0x6E41C4C993f0C2967eB9F8a3B27E9AD1E0dDb12e`](https://basescan.org/address/0x6E41C4C993f0C2967eB9F8a3B27E9AD1E0dDb12e) on Base mainnet
+## The problem
 
-## Features
+Say you run a small shop in Lagos. Some of your customers would like to pay you in crypto. Taking it usually means you need to know about wallets, networks and exchange rates. If a customer sends the wrong coin, you may end up holding something whose price moves every hour. Most small shops decide it isn't worth the trouble.
 
-- **Wallet sign-in:** sign in with a browser wallet, WalletConnect (scan from a phone), or a passkey wallet that needs no extension or seed phrase.
-- **Shops and products:** add products by hand, or snap a photo of a price list and have it turned into products.
-- **Pay links and QR posters:** one-off invoices or reusable links, each with a printable QR code.
-- **Pay in any token:** USDC directly, or ETH and ERC20 tokens routed through Uniswap v3 into USDC, with slippage protection and refunds of unused input.
-- **Revenue splits:** payouts can be split between up to 10 recipients onchain.
-- **Loyalty:** repeat buyers get a discount you configure.
-- **Receipts and live feed:** every payment emits a receipt event. A public map shows payments as they happen.
-- **Basenames:** sellers and buyers are shown by their Base name when they have one.
+## What QRush does
 
-## How it works
+QRush gives your shop a page and a QR code. A customer scans it and pays. Whatever they pay with, you get USDC, a digital dollar that stays at $1. The payment goes straight to your wallet. QRush never holds your money.
 
-1. A seller signs in, creates a shop and registers it on the QRush contract once. This costs a tiny Base network fee, usually under one cent.
-2. The seller creates a pay link and shows its QR code.
-3. The buyer scans it, picks a token and pays. The contract swaps to USDC if needed, splits the payout and emits a receipt.
-4. The API indexes the receipt, and the dashboard and live feed update.
+## For sellers
 
-## Architecture
+1. Open https://qrushpay.vercel.app/app.
+2. Choose how to sign in. "Passkey wallet" is the easiest. It uses your phone's fingerprint or face unlock, and you don't have to write down any words. You can also use a wallet app you already have.
+3. Create your shop with its name and city.
+4. Add your products. Type them in, or take a photo of your price list and QRush will fill them in for you. Check them before you save.
+5. Register your shop on Base. You only do this once. It needs a tiny amount of ETH in your wallet for the network fee (about $0.20 is more than enough). The dashboard shows your address and a QR code so you can top it up.
+6. Make a pay link for a product or an amount. Print its QR code, or share the link on WhatsApp or anywhere else.
+7. When someone pays, it shows up on your dashboard with a receipt.
+
+You can also split each payment between partners (for example 70% to you, 30% to a supplier), and give repeat customers a discount.
+
+## For buyers
+
+1. Scan the shop's QR code with your phone camera, or open the link they sent you.
+2. Connect your wallet.
+3. Pay with USDC, ETH or another common token. If it isn't USDC, it is swapped to USDC in the same payment, so the shop gets the exact price.
+4. You get a receipt you can open again later.
+
+## What it costs
+
+QRush charges no fee. Each payment costs a small Base network fee, paid by whoever sends it (usually under one cent). Sellers pay the same kind of fee once, to register their shop.
+
+## Questions
+
+**Do I need crypto experience?**
+No. With a passkey wallet you sign in with your fingerprint or face. The only crypto step is adding a little ETH to your wallet once to pay network fees.
+
+**What is USDC?**
+A digital dollar. One USDC is meant to be worth one US dollar, so your takings don't go up and down like other crypto.
+
+**What is Base?**
+The network the payments run on. It is fast and very cheap to use, which is why the fees are fractions of a cent.
+
+**Is my money safe?**
+Payments go from the buyer straight to your wallet through a public contract. QRush can't hold, freeze or move your money. Look after your wallet and its passkey, because whoever controls it controls the funds.
+
+**Do I need a seed phrase?**
+Not with the passkey wallet. It is tied to your device's passkey. If you use another wallet app, that app's usual backup rules apply.
+
+## Links
+
+- App: https://qrushpay.vercel.app
+- Contract on Basescan (verified): [0x6E41C4C993f0C2967eB9F8a3B27E9AD1E0dDb12e](https://basescan.org/address/0x6E41C4C993f0C2967eB9F8a3B27E9AD1E0dDb12e)
+
+---
+
+## For developers
+
+### Layout
 
 ```
-contracts/   Foundry project: QRushCheckout contract, unit and Base fork tests, deploy script
-api/         TypeScript API (Hono, viem, SQLite + drizzle): auth, shops, invoices, indexer, feed
+contracts/   Foundry project: QRushCheckout contract, tests, deploy script
+api/         TypeScript API (Hono, viem, SQLite + drizzle): sign-in, shops, invoices, indexer, feed
 web/         Next.js app: landing page, seller dashboard, pay page, receipts, live map
 ```
 
-The web app serves the API under `/api` when deployed, so a single Vercel project hosts both.
+In production the web app serves the API under `/api`, so one Vercel project runs both.
 
-## Contract: `QRushCheckout`
+The contract handles seller registration, payout splits, invoices and pay links (including EIP-712 signed ones), and payments in USDC, ETH or ERC20. Non-USDC payments are exact-output swaps on Uniswap v3 with a deadline and a max input, and unused input is refunded. Every payment emits a receipt event that the API indexes.
 
-| Concern | Behaviour |
-| --- | --- |
-| Seller registry | `registerSeller(name, recipients, bps)`, `updateSellerName`, `setSplits` (≤10 recipients, sum 10 000 bps; empty = 100 % to seller; last recipient receives rounding dust) |
-| Invoices / pay links | `createInvoice` (seller tx) or EIP-712 signed invoice published by the buyer via `publishInvoice`. Invoice key = `keccak256(seller, id)`, so ids cannot be squatted by other sellers. `maxUses` 0 = reusable pay link, `expiresAt` 0 = no expiry. Optional line items are hashed and emitted. |
-| Signatures | ECDSA first (works for EIP-7702 delegated EOAs), then ERC-1271 for smart-contract sellers |
-| Payment | `payWithUSDC`, `payWithToken(path, maxIn, deadline)`, `payWithETH(path, deadline)` — exact-output swaps on SwapRouter02 `0x2626…e481`, unused input refunded, approvals reset, `amountInMaximum` + deadline as slippage protection |
-| Loyalty | `setLoyalty(threshold, discountBps ≤ 5000)`: after `threshold` purchases from a seller, the buyer pays `amount × (1 − bps)` |
-| Events | `InvoiceCreated`, `InvoiceCancelled`, `PaymentReceived` (receipt id, buyer, tokenIn, amountIn, gross, discount, net, purchase #), `PayoutSent`, seller/split/loyalty config events |
-| Safety | OZ `ReentrancyGuard`, `SafeERC20`, `Multicall` (publish + pay in one tx), ETH only accepted from WETH |
+### Setup
 
-## API
-
-All amounts are decimal USDC strings (`"12.25"`) in JSON. Auth is `Authorization: Bearer <jwt>` from SIWE.
-
-| Route | Purpose |
-| --- | --- |
-| `GET /auth/nonce`, `POST /auth/verify`, `GET /auth/me` | Sign-In with Ethereum (EIP-4361; ERC-1271/6492 smart wallets verified through viem) |
-| `GET/POST/PATCH/DELETE /shops[/:id]`, `/shops/:id/products[/:productId]`, `GET /shops/by-slug/:slug` | Shop + product CRUD (bulk product create accepts an array), public storefront |
-| `GET /seller/onchain`, `POST /seller/onchain/register`, `GET/PUT /seller/splits`, `GET/PUT /seller/loyalty` | Reads onchain config; writes return ready-to-send tx calldata |
-| `POST /invoices`, `GET /invoices[/:id]`, `POST /invoices/:id/signature`, `POST /invoices/:id/cancel` | Create from products or a fixed amount; returns EIP-712 typed data, `createInvoice` calldata, pay URL and QR |
-| `GET /pay/:key`, `/pay/:key/qr.png`, `/pay/:key/qr.svg`, `/pay/:key/receipts` | Public pay page data (records viewer geo), QR images |
-| `GET /pay/:key/checkout?buyer=&token=usdc\|eth\|0x…&slippageBps=` | Quotes (QuoterV2, best of direct + via-WETH routes, loyalty applied) and returns `transactions` for EOAs and a `calls` batch for smart wallets |
-| `GET /receipts/mine`, `GET /receipts/:id`, `GET /loyalty/:seller/:buyer` | Receipts with line items and payouts; loyalty progress |
-| `GET /feed/live` (SSE, `?seller=`/`?shopId=`), `GET /feed/recent` | Live payment stream and recent geotagged payments for a map |
-| `GET /basenames/resolve/:name`, `GET /basenames/reverse/:address` | Basenames forward / reverse (ENSIP-19 L2 reverse registrar, forward-verified) |
-| `POST /ai/shop-setup` | Photo of a menu/price list (multipart `image`, or JSON `imageUrl`/`imageBase64`) → products; optional `shopId` saves them. Non-USD lists are flagged, not saved. |
-| `GET /aa/config`, `POST /aa/paymaster`, `POST /aa/bundler` | ERC-4337 (EntryPoint v0.7) passkey smart-wallet support: ERC-7677 paymaster proxy that only sponsors checkout payments and `approve(checkout)`, and an allow-listed bundler proxy |
-
-The indexer polls `QRushCheckout` logs, writes invoices/payments/payouts to SQLite in one transaction per
-batch, and pushes payment events to the SSE feed after commit.
-
-
-## Local setup
-
-Requirements: Node 24, pnpm 9+ and [Foundry](https://book.getfoundry.sh/).
+You need Node 24, pnpm and [Foundry](https://book.getfoundry.sh/).
 
 ```bash
 git clone https://github.com/comzzy/qrush.git && cd qrush
 pnpm install
 
-# contract dependencies (not committed)
 cd contracts
 forge install foundry-rs/forge-std OpenZeppelin/openzeppelin-contracts --no-git
 forge build
 cd ..
 
-# environment
-cp api/.env.example api/.env              # fill in RPC_URL, JWT_SECRET, ...
-cp web/.env.example web/.env.local
+cp api/.env.example api/.env              # RPC_URL, JWT_SECRET, CHECKOUT_ADDRESS, ...
+cp web/.env.example web/.env.local        # site URL, WalletConnect project id
 cp contracts/.env.example contracts/.env  # only needed to deploy
 
-pnpm --filter qrush-api dev   # API on http://localhost:8787 (see PORT)
-pnpm --filter qrush-web dev   # web on http://localhost:3000
+pnpm --filter qrush-api dev   # API on port 8787
+pnpm --filter qrush-web dev   # web on port 3000
 ```
 
-Never commit `.env` files or private keys. The `.gitignore` already excludes them.
+Don't commit `.env` files or keys. They are already in `.gitignore`.
 
-## Tests
+### Tests
 
 ```bash
-cd contracts && forge test                  # unit tests
-forge test --fork-url $BASE_RPC_URL         # Base mainnet fork tests
-pnpm --filter qrush-api test                # API (vitest)
-pnpm --filter qrush-web e2e                 # browser tests (Playwright)
+cd contracts && forge test                    # contract unit tests
+forge test --fork-url $BASE_RPC_URL           # Base mainnet fork tests
+pnpm --filter qrush-api test                  # API tests
+pnpm --filter qrush-web e2e                   # browser tests
 ```
 
-## Deploying the contract
+### Deploying the contract
 
 ```bash
 cd contracts
@@ -109,17 +111,12 @@ source .env     # BASE_RPC_URL, BASESCAN_API_KEY, DEPLOYER_PRIVATE_KEY
 ./deploy-base.sh
 ```
 
-## Known limitations
+### Known limits
 
-- Paying with ETH against a signed-but-unpublished invoice takes two EOA transactions (publish, then
-  pay), because `Multicall` is non-payable. Smart wallets batch both in one user operation. USDC/ERC20
-  payments publish and pay in a single transaction.
-- Prices are USDC-denominated. Photo-imported price lists in other currencies are returned flagged and not saved.
-- Live geolocation relies on CDN headers (Vercel / Cloudflare / `x-geo-*`); payments fall back to the
-  shop's location.
-- The paymaster/bundler proxies are tested against a mock upstream; plug in a real provider URL for production.
-- SQLite is single-node; run one API instance per database file.
+- Paying in ETH for a signed invoice that isn't published yet takes two transactions from a normal wallet. Smart wallets do it in one.
+- Prices are in USDC. Photo-imported price lists in other currencies are flagged, not saved.
+- SQLite is single-node. Run one API instance per database file.
 
 ## License
 
-MIT, see [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE).
