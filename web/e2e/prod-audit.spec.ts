@@ -21,7 +21,8 @@ for (const width of [1440, 360]) {
       await page.goto(path, { waitUntil: "load" });
       const ms = Date.now() - t;
       if (ms > 8000) problems.push(`slow ${path}: ${ms}ms`);
-      await page.waitForTimeout(800);
+      if (!path.startsWith("/app")) await page.locator("h1").first().waitFor({ timeout: 10_000 }).catch(() => {});
+      await page.waitForTimeout(500);
       const r = await page.evaluate(() => {
         const W = document.documentElement.clientWidth;
         const overflow = document.documentElement.scrollWidth > W + 1;
