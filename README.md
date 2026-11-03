@@ -26,7 +26,7 @@ On **Products**, tap **Checkout** on a product and pick how the buyer gets it:
 
 - **In person**: shops, food, salons. The buyer gets an order code and a QR. On **Orders**, type or scan it and tap **Mark collected**.
 - **Delivery**: the buyer gives an address and phone. Mark it **Shipped** (add tracking if you like), then **Delivered**.
-- **Booking**: the buyer picks a date and time. Mark it **Confirmed**, then **Done**.
+- **Booking (services)**: salons, repairs, lessons. The buyer picks a date and time. Mark it **Confirmed**, then **Done**.
 - **Digital**: tick "I own the rights to sell this" and upload a file (up to 50 MB, PDF or EPUB for ebooks) or paste a link.
 
 Each type asks the buyer for sensible details (name, phone, address and so on). Change any of them to off, optional or required. Only you see the answers, on **Orders** and **Receipts**.
