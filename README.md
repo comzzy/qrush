@@ -24,6 +24,25 @@ QRush is a QR and pay-link checkout on Base. Customers pay with crypto; sellers 
 - Payments go directly from the buyer to the seller's wallet through a public contract. QRush never holds funds.
 - Amounts and recipients are fixed by the contract and the server, not by the link.
 
+## Why QRush is different
+
+Coinbase Commerce, Daimo Pay and Request also take crypto payments. QRush is different in these ways:
+
+- **No Coinbase account needed.** Sellers only need a wallet on Base. Coinbase closed Commerce on March 31, 2026, and Coinbase Business only accepts businesses in the US or Singapore ([Coinbase Help](https://help.coinbase.com/en/transitioning-from-coinbase-commerce-to-coinbase-business)). QRush works in places like Nigeria.
+- **Any token in, USDC out, in one transaction** through Uniswap v3.
+- **Every kind of business:** in-person pickup codes, delivery, bookings and digital downloads. Sold PDFs are stamped with the buyer and order code, and every file gets a fingerprint.
+- **Passkey wallet for buyers** who don't have a wallet app.
+- **QR stickers** that open a checkout with a verified-shop panel, checked onchain.
+- **Snap your price list:** a photo of a menu or price list becomes products.
+
+## Why now
+
+- Sub-Saharan Africa received over $205B in crypto value from July 2024 to June 2025, up about 52% year over year. Nigeria alone received $92.1B, and more of the region's value moves in small transfers than elsewhere ([Chainalysis, Sept 2025](https://www.chainalysis.com/blog/subsaharan-africa-crypto-adoption-2025/)).
+
+## Social preview and SEO
+
+The site ships an Open Graph / Twitter card image (`web/app/opengraph-image.tsx`, 1200x630), an Apple touch icon, a web manifest, `robots.txt`, `sitemap.xml`, canonical URLs and JSON-LD (Organization and SoftwareApplication).
+
 ## How it works
 
 **Seller**
