@@ -18,7 +18,7 @@ const STEPS = [
 ];
 
 const DIFFERENT = [
-  { title: "No Coinbase account needed", body: "Sellers only need a wallet on Base. QRush works in places like Nigeria, where Coinbase Business is not offered.", bg: "bg-pink-soft" },
+  { title: "No Coinbase account needed", body: "Sellers in any country only need a wallet on Base. QRush works everywhere, including the many markets, like Nigeria, where Coinbase Business is not offered.", bg: "bg-pink-soft" },
   { title: "Any token in, USDC out, one transaction", body: "Buyers pay with ETH or other tokens. Our contract swaps them to USDC through Uniswap v3 and pays you in the same transaction.", bg: "bg-sky/50" },
   { title: "Fits every kind of business", body: "In-person pickup codes, delivery orders, bookings, and digital downloads. Sold PDFs are stamped with the buyer and order code, and every file gets a fingerprint so copies can be traced back to your shop.", bg: "bg-mint/50" },
   { title: "Passkey wallet for buyers", body: "No wallet app? Buyers can create one with their phone's fingerprint or face unlock and pay right away.", bg: "bg-sun/60" },
@@ -241,9 +241,9 @@ export default function Home() {
       <section className="section py-12" id="demand">
         <Reveal className="card relative overflow-hidden bg-sky/40 p-6 sm:p-10">
           <span className="pill">Why now</span>
-          <h2 className="h-display mt-3 text-3xl sm:text-4xl">People already pay in stablecoins</h2>
+          <h2 className="h-display mt-3 text-3xl sm:text-4xl">Stablecoins are already everyday money</h2>
           <p className="mt-3 max-w-2xl">
-            In Nigeria and across Africa, crypto is used for everyday money, not just trading. Shops need a simple way to accept it.
+            Around the world, people use stablecoins to save and pay, not just to trade. Shops in any country need a simple way to accept them. Here are examples from one fast-growing region, and why existing tools leave most sellers out.
           </p>
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {SOURCES.map((s) => (

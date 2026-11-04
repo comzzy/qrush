@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description:
     "Print a QR code, get paid in USDC. Buyers pay with any token from any wallet; sellers get split payouts, onchain receipts and loyalty rewards.",
   applicationName: "QRush",
-  keywords: ["USDC payments", "QR code payments", "Base", "stablecoin checkout", "crypto payments Nigeria", "pay links"],
+  keywords: ["USDC payments", "QR code payments", "Base", "stablecoin checkout", "accept crypto payments worldwide", "pay links"],
   alternates: { canonical: "/" },
   openGraph: {
     title: "QRush — QR payments in USDC on Base",

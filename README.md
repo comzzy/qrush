@@ -28,7 +28,7 @@ QRush is a QR and pay-link checkout on Base. Customers pay with crypto; sellers 
 
 Coinbase Commerce, Daimo Pay and Request also take crypto payments. QRush is different in these ways:
 
-- **No Coinbase account needed.** Sellers only need a wallet on Base. Coinbase closed Commerce on March 31, 2026, and Coinbase Business only accepts businesses in the US or Singapore ([Coinbase Help](https://help.coinbase.com/en/transitioning-from-coinbase-commerce-to-coinbase-business)). QRush works in places like Nigeria.
+- **No Coinbase account needed.** Sellers in any country only need a wallet on Base. Coinbase closed Commerce on March 31, 2026, and Coinbase Business only accepts businesses in the US or Singapore ([Coinbase Help](https://help.coinbase.com/en/transitioning-from-coinbase-commerce-to-coinbase-business)). QRush works everywhere, including markets Coinbase doesn't serve, such as Nigeria.
 - **Any token in, USDC out, in one transaction** through Uniswap v3.
 - **Every kind of business:** in-person pickup codes, delivery, bookings and digital downloads. Sold PDFs are stamped with the buyer and order code, and every file gets a fingerprint.
 - **Passkey wallet for buyers** who don't have a wallet app.
@@ -66,7 +66,8 @@ Sources: [Daimo docs](https://docs.daimo.com/introduction), [Request Network doc
 
 ## Why now
 
-- Sub-Saharan Africa received over $205B in crypto value from July 2024 to June 2025, up about 52% year over year. Nigeria alone received $92.1B, and more of the region's value moves in small transfers than elsewhere ([Chainalysis, Sept 2025](https://www.chainalysis.com/blog/subsaharan-africa-crypto-adoption-2025/)).
+- QRush is for sellers worldwide. One example of demand: Sub-Saharan Africa received over $205B in crypto value from July 2024 to June 2025, up about 52% year over year. Nigeria alone received $92.1B, and more of the region's value moves in small transfers than elsewhere ([Chainalysis, Sept 2025](https://www.chainalysis.com/blog/subsaharan-africa-crypto-adoption-2025/)).
+- Coinbase Business only accepts businesses in the US or Singapore, so most of the world's sellers need another option ([Coinbase Help](https://help.coinbase.com/en/transitioning-from-coinbase-commerce-to-coinbase-business)).
 
 ## Social preview and SEO
 
