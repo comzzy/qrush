@@ -47,7 +47,10 @@ for (const width of [1440, 360]) {
       }
     }
     for (const href of external) {
-      const res = await request.get(href, { timeout: 20_000, failOnStatusCode: false }).catch(() => null);
+      const res =
+        (await request.get(href, { timeout: 20_000, failOnStatusCode: false }).catch(() => null)) ??
+        // Some hosts (YouTube) answer a bot with slow redirect chains; the first hop answering is enough.
+        (await request.get(href, { timeout: 20_000, failOnStatusCode: false, maxRedirects: 0 }).catch(() => null));
       // Some sites refuse bots (403/429); only real breakage counts.
       if (!res || res.status() === 404 || res.status() >= 500) problems.push(`broken external ${href}: ${res?.status() ?? "no response"}`);
     }
