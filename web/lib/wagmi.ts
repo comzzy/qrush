@@ -39,7 +39,7 @@ function connectors(): CreateConnectorFn[] {
       walletConnect({
         projectId: WALLETCONNECT_PROJECT_ID,
         showQrModal: true,
-        metadata: { name: "QRush", description: "Get paid in USDC by QR", url: "https://qrushpay.vercel.app", icons: ["https://qrushpay.vercel.app/icon.svg"] },
+        metadata: { name: "QRush", description: "Get paid in USDC by QR", url: typeof window !== "undefined" ? window.location.origin : "https://qrush.online", icons: ["https://qrush.online/icon.svg"] },
       }),
     );
   }

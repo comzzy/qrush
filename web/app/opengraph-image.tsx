@@ -64,7 +64,7 @@ export default function OgImage() {
         <div style={{ display: "flex", alignItems: "center", transform: "rotate(4deg)" }}>
           <Qr />
         </div>
-        <div style={{ position: "absolute", right: 64, bottom: 40, fontSize: 24, fontWeight: 700 }}>qrushpay.vercel.app</div>
+        <div style={{ position: "absolute", right: 64, bottom: 40, fontSize: 24, fontWeight: 700 }}>qrush.online</div>
       </div>
     ),
     size,

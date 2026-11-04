@@ -9,7 +9,7 @@ import { RecentStats } from "@/components/RecentStats";
 import { HeroText } from "@/components/HeroText";
 import { CompareTable, COMPARE_SOURCES } from "@/components/CompareTable";
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://qrushpay.vercel.app";
+const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://qrush.online";
 
 const STEPS = [
   { n: "1", title: "Make a pay link", body: "Sign in with your wallet, name your shop, add an amount or a product. QRush gives you a QR code to print or show on screen.", Art: QrTileSticker, bg: "bg-pink-soft" },

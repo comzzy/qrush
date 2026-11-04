@@ -2,13 +2,13 @@
 
 QRush is a QR and pay-link checkout on Base. Customers pay with crypto; sellers receive USDC.
 
-[![Live app](https://img.shields.io/badge/app-qrushpay.vercel.app-0052FF)](https://qrushpay.vercel.app)
+[![Live app](https://img.shields.io/badge/app-qrush.online-0052FF)](https://qrush.online)
 [![Contract on Basescan](https://img.shields.io/badge/Basescan-verified%20contract-2ea44f)](https://basescan.org/address/0x6E41C4C993f0C2967eB9F8a3B27E9AD1E0dDb12e)
 [![GitHub](https://img.shields.io/badge/GitHub-comzzy%2Fqrush-181717?logo=github)](https://github.com/comzzy/qrush)
 [![X](https://img.shields.io/badge/X-%40kane__120-000000?logo=x)](https://x.com/kane_120)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-- Live app: https://qrushpay.vercel.app
+- Live app: https://qrush.online (also https://qrushpay.vercel.app)
 - Contract (verified): [`0x6E41C4C993f0C2967eB9F8a3B27E9AD1E0dDb12e`](https://basescan.org/address/0x6E41C4C993f0C2967eB9F8a3B27E9AD1E0dDb12e)
 
 ## The problem
@@ -77,7 +77,7 @@ The site ships an Open Graph / Twitter card image (`web/app/opengraph-image.tsx`
 
 **Seller**
 
-1. Open https://qrushpay.vercel.app/app and sign in with a passkey wallet or an existing wallet.
+1. Open https://qrush.online/app and sign in with a passkey wallet or an existing wallet.
 2. Create a shop with a name and city.
 3. Add products by typing them or by uploading a photo of a price list, then review them.
 4. Register the shop on Base once. This needs a small amount of ETH for the network fee.
@@ -128,7 +128,7 @@ No system can fully prevent piracy of digital files. The measures above make cop
 
 ## Try it
 
-1. Open https://qrushpay.vercel.app/app and create a shop with a passkey wallet.
+1. Open https://qrush.online/app and create a shop with a passkey wallet.
 2. Add one product and register the shop on Base.
 3. Create a pay link, open it on a second device and pay with USDC.
 4. Open the receipt and see the payment on the seller dashboard.

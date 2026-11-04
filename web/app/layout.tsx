@@ -9,7 +9,7 @@ const fredoka = Fredoka({ subsets: ["latin"], variable: "--font-fredoka", weight
 const shrikhand = Shrikhand({ subsets: ["latin"], variable: "--font-shrikhand", weight: "400" });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://qrushpay.vercel.app"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://qrush.online"),
   title: { default: "QRush — QR payments in USDC on Base", template: "%s · QRush" },
   description:
     "Print a QR code, get paid in USDC. Buyers pay with any token from any wallet; sellers get split payouts, onchain receipts and loyalty rewards.",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://qrushpay.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://qrush.online";
 const JSON_LD = [
   {
     "@context": "https://schema.org",

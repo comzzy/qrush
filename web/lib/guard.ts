@@ -7,7 +7,7 @@ export const CHECKOUT_ADDRESS: Address = getAddress(
 );
 export const USDC_ADDRESS: Address = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 /** Hosts that serve real QRush pay links. */
-export const PAY_HOSTS = ["qrushpay.vercel.app"];
+export const PAY_HOSTS = ["qrush.online", "www.qrush.online", "qrushpay.vercel.app"];
 
 /**
  * Checks every call the server asked the wallet to send before the wallet sees it.

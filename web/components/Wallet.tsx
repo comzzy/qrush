@@ -20,7 +20,7 @@ export function ConnectWallet({ label = "Connect a wallet" }: { label?: string }
   const [busy, setBusy] = useState<string | null>(null);
   const noop = () => () => {};
   const hasInjected = useSyncExternalStore(noop, () => Boolean((window as { ethereum?: unknown }).ethereum), () => true);
-  const here = useSyncExternalStore(noop, () => window.location.href, () => "https://qrushpay.vercel.app/app");
+  const here = useSyncExternalStore(noop, () => window.location.href, () => "https://qrush.online/app");
 
   const go = async (id: string) => {
     const connector = connectors.find((c) => c.uid === id);
