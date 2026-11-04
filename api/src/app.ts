@@ -11,6 +11,7 @@ import { payRoutes } from "./routes/pay.js";
 import { loyaltyRoutes, receiptRoutes } from "./routes/receipts.js";
 import { sellerRoutes } from "./routes/seller.js";
 import { shopRoutes } from "./routes/shops.js";
+import { waitlistRoutes } from "./routes/waitlist.js";
 
 export function createApp(deps: Deps, opts: { log?: boolean } = {}) {
   const app = new Hono<AppEnv>();
@@ -37,6 +38,7 @@ export function createApp(deps: Deps, opts: { log?: boolean } = {}) {
   app.route("/feed", feedRoutes);
   app.route("/ai", aiRoutes);
   app.route("/aa", aaRoutes);
+  app.route("/waitlist", waitlistRoutes);
 
   app.onError((err, c) => {
     if (err instanceof HTTPException) return c.json({ error: err.message }, err.status);

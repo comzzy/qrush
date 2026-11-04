@@ -6,6 +6,8 @@ import { MapPinSticker, PhoneScanSticker, QrTileSticker, ReceiptSticker, SplitSt
 import { ScanPanel } from "@/components/ScanPanel";
 import { Reveal } from "@/components/Reveal";
 import { RecentStats } from "@/components/RecentStats";
+import { OnchainStats } from "@/components/OnchainStats";
+import { Waitlist } from "@/components/Waitlist";
 import { HeroText } from "@/components/HeroText";
 import { CompareTable, COMPARE_SOURCES } from "@/components/CompareTable";
 
@@ -28,28 +30,39 @@ const DIFFERENT = [
 
 const SOURCES = [
   {
-    stat: "$205B+",
-    body: "Crypto value received in Sub-Saharan Africa from July 2024 to June 2025, up about 52% from the year before.",
-    label: "Chainalysis, Sept 2025",
-    href: "https://www.chainalysis.com/blog/subsaharan-africa-crypto-adoption-2025/",
+    stat: "Jul 2025",
+    title: "US stablecoin law",
+    body: "The GENIUS Act became law: the first US federal rules for payment stablecoins, with 1:1 reserves and monthly disclosures.",
+    label: "White House",
+    href: "https://www.whitehouse.gov/fact-sheets/2025/07/fact-sheet-president-donald-j-trump-signs-genius-act-into-law/",
   },
   {
-    stat: "$92.1B",
-    body: "Value received by Nigeria in the same 12 months, nearly triple the next country. Inflation and limited access to dollars make stablecoins attractive.",
-    label: "Chainalysis, Sept 2025",
-    href: "https://www.chainalysis.com/blog/subsaharan-africa-crypto-adoption-2025/",
-  },
-  {
-    stat: "Small payments",
-    body: "Over 8% of value moved in the region was in transfers under $10,000, compared with 6% elsewhere, a sign of everyday retail use.",
-    label: "Chainalysis, Sept 2025",
-    href: "https://www.chainalysis.com/blog/subsaharan-africa-crypto-adoption-2025/",
-  },
-  {
-    stat: "US + Singapore only",
-    body: "Coinbase closed Commerce on March 31, 2026. Its replacement, Coinbase Business, only accepts businesses in the US or Singapore.",
+    stat: "Mar 2026",
+    title: "A big checkout closed",
+    body: "Coinbase Commerce shut down on March 31, 2026. Its replacement only takes businesses in the US or Singapore, so sellers elsewhere need a new option.",
     label: "Coinbase Help Center",
     href: "https://help.coinbase.com/en/transitioning-from-coinbase-commerce-to-coinbase-business",
+  },
+  {
+    stat: "May 2025",
+    title: "Passkey smart wallets",
+    body: "Ethereum's Pectra upgrade added EIP-7702 smart accounts, and phone passkeys can now sign for a wallet. Buyers pay with Face ID, no seed phrase.",
+    label: "ethereum.org",
+    href: "https://ethereum.org/roadmap/pectra/",
+  },
+  {
+    stat: "Base",
+    title: "Native USDC, low fees",
+    body: "Circle issues USDC natively on Base, and network fees are low enough for small, everyday sales.",
+    label: "Circle",
+    href: "https://www.circle.com/multi-chain-usdc/base",
+  },
+  {
+    stat: "Mar 2025",
+    title: "Clear rules in more countries",
+    body: "Example: Nigeria's Investments and Securities Act 2025 brings digital assets under its SEC, giving businesses a legal framework.",
+    label: "Legal 500",
+    href: "https://www.legal500.com/intelligence/nigeria/technology/what-the-investment-and-securities-act-2025-means-for-digital-and-virtual-assets-in-nigeria",
   },
 ];
 
@@ -80,6 +93,7 @@ export default function Home() {
         <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-12">
           <div className="relative min-w-0">
             <HeroText />
+            <p className="mt-4 max-w-xl font-semibold" data-testid="positioning">A complete storefront and order system, not just a pay button.</p>
             <div className="mt-8 hidden flex-wrap gap-4 lg:flex">
               <Float rotate={-8} delay={0.5}><UsdcCoinSticker size={72} /></Float>
               <Float rotate={6} delay={0.6} duration={6}><ReceiptSticker size={72} /></Float>
@@ -240,15 +254,16 @@ export default function Home() {
       {/* Demand */}
       <section className="section py-12" id="demand">
         <Reveal className="card relative overflow-hidden bg-sky/40 p-6 sm:p-10">
-          <span className="pill">Why now</span>
-          <h2 className="h-display mt-3 text-3xl sm:text-4xl">Stablecoins are already everyday money</h2>
+          <span className="pill">What changed in 2025–2026</span>
+          <h2 className="h-display mt-3 text-3xl sm:text-4xl">Five things that make this the year</h2>
           <p className="mt-3 max-w-2xl">
-            Around the world, people use stablecoins to save and pay, not just to trade. Shops in any country need a simple way to accept them. Here are examples from one fast-growing region, and why existing tools leave most sellers out.
+            Stablecoin rules got clearer, wallets got easier, and a major checkout left most of the world. Each point links to its source.
           </p>
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {SOURCES.map((s) => (
-              <div key={s.stat + s.label} className="min-w-0 rounded-3xl border-2 border-ink bg-white p-5">
+              <div key={s.title} className="min-w-0 rounded-3xl border-2 border-ink bg-white p-5">
                 <div className="text-2xl font-bold break-words sm:text-3xl">{s.stat}</div>
+                <h3 className="mt-1 font-bold">{s.title}</h3>
                 <p className="mt-2 text-sm text-ink-soft">{s.body}</p>
                 <a href={s.href} target="_blank" rel="noopener noreferrer" className="mt-3 inline-block text-sm font-semibold underline underline-offset-2">
                   Source: {s.label} ↗
@@ -256,6 +271,13 @@ export default function Home() {
               </div>
             ))}
           </div>
+          <OnchainStats />
+        </Reveal>
+      </section>
+
+      <section className="section py-6">
+        <Reveal>
+          <Waitlist />
         </Reveal>
       </section>
 

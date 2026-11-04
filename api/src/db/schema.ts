@@ -236,3 +236,9 @@ export const indexerState = sqliteTable("indexer_state", {
   id: text("id").primaryKey(),
   lastBlock: integer("last_block").notNull(),
 });
+
+export const waitlist = sqliteTable("waitlist", {
+  email: text("email").primaryKey(),
+  businessType: text("business_type").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+});

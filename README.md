@@ -19,6 +19,8 @@ QRush is a QR and pay-link checkout on Base. Customers pay with crypto; sellers 
 
 ## The solution
 
+A complete storefront and order system, not just a pay button.
+
 - One QR code or pay link per product or amount, created in a few minutes.
 - The buyer pays in USDC or ETH; the seller always receives the exact price in USDC.
 - Payments go directly from the buyer to the seller's wallet through a public contract. QRush never holds funds.
@@ -64,10 +66,15 @@ Sources: [Daimo docs](https://docs.daimo.com/introduction), [Request Network doc
 - Ebook and course sellers: PDFs stamped for each buyer.
 - Shops with partners or staff: automatic splits between wallets.
 
-## Why now
+## What changed in 2025–2026
 
-- QRush is for sellers worldwide. One example of demand: Sub-Saharan Africa received over $205B in crypto value from July 2024 to June 2025, up about 52% year over year. Nigeria alone received $92.1B, and more of the region's value moves in small transfers than elsewhere ([Chainalysis, Sept 2025](https://www.chainalysis.com/blog/subsaharan-africa-crypto-adoption-2025/)).
-- Coinbase Business only accepts businesses in the US or Singapore, so most of the world's sellers need another option ([Coinbase Help](https://help.coinbase.com/en/transitioning-from-coinbase-commerce-to-coinbase-business)).
+- **Jul 2025:** the US GENIUS Act became law, the first federal rules for payment stablecoins ([White House](https://www.whitehouse.gov/fact-sheets/2025/07/fact-sheet-president-donald-j-trump-signs-genius-act-into-law/)).
+- **Mar 2026:** Coinbase Commerce shut down on March 31. Its replacement only takes businesses in the US or Singapore ([Coinbase Help](https://help.coinbase.com/en/transitioning-from-coinbase-commerce-to-coinbase-business)).
+- **May 2025:** Ethereum's Pectra upgrade added EIP-7702 smart accounts; phone passkeys can sign for wallets ([ethereum.org](https://ethereum.org/roadmap/pectra/)).
+- **Base:** native USDC from Circle and low fees ([Circle](https://www.circle.com/multi-chain-usdc/base)).
+- **Example, Nigeria:** the Investments and Securities Act 2025 brings digital assets under the SEC ([Legal 500](https://www.legal500.com/intelligence/nigeria/technology/what-the-investment-and-securities-act-2025-means-for-digital-and-virtual-assets-in-nigeria)).
+
+The home page also shows a live payment count read from the checkout contract (`receiptCount`, with a Basescan link), a seller list form (email + business type, saved in the database, with honeypot, minimum fill time and rate limit; the count shows only when above 0) and a "Talk to us" link to [x.com/kane_120](https://x.com/kane_120).
 
 ## Social preview and SEO
 

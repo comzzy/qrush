@@ -15,6 +15,13 @@
       "when": 1793722399980,
       "tag": "0001_checkout_orders",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1793770045361,
+      "tag": "0002_waitlist",
+      "breakpoints": true
     }
   ]
 }
