@@ -26,6 +26,10 @@ export function Footer() {
             <a href={X_URL} target="_blank" rel="noopener noreferrer me" aria-label="Follow @kane_120 on X" className="grid h-10 w-10 place-items-center rounded-full border-2 border-ink bg-white transition-transform hover:-translate-y-0.5">
               <XIcon className="h-4 w-4" />
             </a>
+            <a href="https://youtu.be/pPCL7nlAEpY" target="_blank" rel="noopener noreferrer" data-testid="demo-video-link" className="inline-flex h-10 items-center gap-2 rounded-full border-2 border-ink bg-white px-4 text-sm font-semibold transition-transform hover:-translate-y-0.5">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" className="h-4 w-4" fill="currentColor"><path d="M8 5.5v13l11-6.5-11-6.5Z" /></svg>
+              Demo video
+            </a>
           </div>
         </div>
         <FooterCol title="Product" links={[["/features", "Features"], ["/live", "Live payments"], ["/app", "Seller dashboard"]]} />
