@@ -13,15 +13,43 @@ export const metadata: Metadata = {
   title: { default: "QRush — QR payments in USDC on Base", template: "%s · QRush" },
   description:
     "Print a QR code, get paid in USDC. Buyers pay with any token from any wallet; sellers get split payouts, onchain receipts and loyalty rewards.",
-  openGraph: { title: "QRush", description: "QR payments in USDC on Base.", type: "website" },
-  icons: { icon: "/icon.svg" },
-  twitter: { card: "summary_large_image", site: "@kane_120", creator: "@kane_120", title: "QRush", description: "QR payments in USDC on Base." },
+  applicationName: "QRush",
+  keywords: ["USDC payments", "QR code payments", "Base", "stablecoin checkout", "crypto payments Nigeria", "pay links"],
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "QRush — QR payments in USDC on Base",
+    description: "Print a QR code, get paid in USDC. Buyers pay with any token from any wallet, in one transaction.",
+    url: "/",
+    siteName: "QRush",
+    type: "website",
+    locale: "en_US",
+  },
+  icons: { icon: "/icon.svg", apple: "/apple-icon" },
+  manifest: "/manifest.webmanifest",
+  twitter: {
+    card: "summary_large_image",
+    site: "@kane_120",
+    creator: "@kane_120",
+    title: "QRush — QR payments in USDC on Base",
+    description: "Print a QR code, get paid in USDC. Buyers pay with any token from any wallet.",
+  },
+  robots: { index: true, follow: true },
 };
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://qrushpay.vercel.app";
-const JSON_LD = {
+const JSON_LD = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "QRush",
+    url: SITE_URL,
+    logo: `${SITE_URL}/apple-icon`,
+    sameAs: ["https://github.com/comzzy/qrush", "https://x.com/kane_120"],
+  },
+  {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
+  image: `${SITE_URL}/opengraph-image`,
   name: "QRush",
   url: SITE_URL,
   description: "QR and pay-link checkout on Base. Buyers pay with crypto from any wallet; sellers receive USDC.",
@@ -29,7 +57,8 @@ const JSON_LD = {
   operatingSystem: "Web",
   offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
   sameAs: ["https://github.com/comzzy/qrush", "https://x.com/kane_120"],
-};
+  },
+];
 
 export const viewport: Viewport = { themeColor: "#fffbed", width: "device-width", initialScale: 1 };
 

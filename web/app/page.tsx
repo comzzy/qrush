@@ -16,6 +16,42 @@ const STEPS = [
   { n: "3", title: "USDC lands, receipt saved", body: "The money goes straight to your wallet (or is split between partners). The buyer gets an onchain receipt and a loyalty stamp.", Art: ReceiptSticker, bg: "bg-mint/50" },
 ];
 
+const DIFFERENT = [
+  { title: "No Coinbase account needed", body: "Sellers only need a wallet on Base. QRush works in places like Nigeria, where Coinbase Business is not offered.", bg: "bg-pink-soft" },
+  { title: "Any token in, USDC out, one transaction", body: "Buyers pay with ETH or other tokens. Our contract swaps them to USDC through Uniswap v3 and pays you in the same transaction.", bg: "bg-sky/50" },
+  { title: "Fits every kind of business", body: "In-person pickup codes, delivery orders, bookings, and digital downloads. Sold PDFs are stamped with the buyer and order code, and every file gets a fingerprint so copies can be traced back to your shop.", bg: "bg-mint/50" },
+  { title: "Passkey wallet for buyers", body: "No wallet app? Buyers can create one with their phone's fingerprint or face unlock and pay right away.", bg: "bg-sun/60" },
+  { title: "QR stickers with a verified-shop panel", body: "Print a sticker for your counter. When scanned, buyers see a verified-shop panel, checked onchain, before they pay.", bg: "bg-blush/60" },
+  { title: "Snap your price list", body: "Take a photo of your menu or price list and QRush turns it into products you can sell.", bg: "bg-cream-deep" },
+];
+
+const SOURCES = [
+  {
+    stat: "$205B+",
+    body: "Crypto value received in Sub-Saharan Africa from July 2024 to June 2025, up about 52% from the year before.",
+    label: "Chainalysis, Sept 2025",
+    href: "https://www.chainalysis.com/blog/subsaharan-africa-crypto-adoption-2025/",
+  },
+  {
+    stat: "$92.1B",
+    body: "Value received by Nigeria in the same 12 months, nearly triple the next country. Inflation and limited access to dollars make stablecoins attractive.",
+    label: "Chainalysis, Sept 2025",
+    href: "https://www.chainalysis.com/blog/subsaharan-africa-crypto-adoption-2025/",
+  },
+  {
+    stat: "Small payments",
+    body: "Over 8% of value moved in the region was in transfers under $10,000, compared with 6% elsewhere, a sign of everyday retail use.",
+    label: "Chainalysis, Sept 2025",
+    href: "https://www.chainalysis.com/blog/subsaharan-africa-crypto-adoption-2025/",
+  },
+  {
+    stat: "US + Singapore only",
+    body: "Coinbase closed Commerce on March 31, 2026. Its replacement, Coinbase Business, only accepts businesses in the US or Singapore.",
+    label: "Coinbase Help Center",
+    href: "https://help.coinbase.com/en/transitioning-from-coinbase-commerce-to-coinbase-business",
+  },
+];
+
 const TEASERS = [
   { title: "Any token in, USDC out", body: "Buyers spend what they hold. You always receive USDC.", Art: UsdcCoinSticker },
   { title: "Any phone wallet", body: "Buyers scan with MetaMask, Trust, Rainbow or 260+ wallets via WalletConnect.", Art: WalletSticker },
@@ -133,6 +169,49 @@ export default function Home() {
             </Reveal>
           ))}
         </div>
+      </section>
+
+      {/* Why QRush is different */}
+      <section className="section py-12" id="different">
+        <Reveal>
+          <span className="pill">Why QRush</span>
+          <h2 className="h-display mt-3 text-4xl sm:text-5xl">Built for shops other checkouts leave out</h2>
+          <p className="mt-3 max-w-2xl text-ink-soft">
+            Coinbase Commerce, Daimo Pay and Request all take crypto payments. Here is what QRush does differently.
+          </p>
+        </Reveal>
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {DIFFERENT.map((d, i) => (
+            <Reveal key={d.title} delay={i * 0.06}>
+              <div className={`card h-full p-6 transition-transform hover:-translate-y-1 ${d.bg}`}>
+                <h3 className="text-xl font-bold">{d.title}</h3>
+                <p className="mt-2 text-ink-soft">{d.body}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      {/* Demand */}
+      <section className="section py-12" id="demand">
+        <Reveal className="card relative overflow-hidden bg-sky/40 p-6 sm:p-10">
+          <span className="pill">Why now</span>
+          <h2 className="h-display mt-3 text-3xl sm:text-4xl">People already pay in stablecoins</h2>
+          <p className="mt-3 max-w-2xl">
+            In Nigeria and across Africa, crypto is used for everyday money, not just trading. Shops need a simple way to accept it.
+          </p>
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {SOURCES.map((s) => (
+              <div key={s.stat + s.label} className="min-w-0 rounded-3xl border-2 border-ink bg-white p-5">
+                <div className="text-2xl font-bold break-words sm:text-3xl">{s.stat}</div>
+                <p className="mt-2 text-sm text-ink-soft">{s.body}</p>
+                <a href={s.href} target="_blank" rel="noopener noreferrer" className="mt-3 inline-block text-sm font-semibold underline underline-offset-2">
+                  Source: {s.label} ↗
+                </a>
+              </div>
+            ))}
+          </div>
+        </Reveal>
       </section>
 
       {/* CTA */}
