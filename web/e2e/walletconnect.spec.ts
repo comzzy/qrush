@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-const BASE = process.env.BASE_URL ?? "https://qrushpay.vercel.app";
+const BASE = process.env.BASE_URL ?? "https://qrush.online";
 for (const [w, h, tag] of [[1440, 900, "desktop"], [390, 844, "mobile"]] as const) {
   test(`walletconnect QR ${tag}`, async ({ page }) => {
     await page.setViewportSize({ width: w, height: h });
