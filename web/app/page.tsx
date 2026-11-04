@@ -7,7 +7,6 @@ import { ScanPanel } from "@/components/ScanPanel";
 import { Reveal } from "@/components/Reveal";
 import { RecentStats } from "@/components/RecentStats";
 import { HeroText } from "@/components/HeroText";
-import { GITHUB_URL, GitHubIcon, X_URL, XIcon } from "@/components/SocialIcons";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://qrushpay.vercel.app";
 
@@ -36,14 +35,6 @@ export default function Home() {
         <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-12">
           <div className="relative min-w-0">
             <HeroText />
-            <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm font-medium text-ink-soft">
-              <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 underline decoration-2 underline-offset-4 hover:text-ink">
-                <GitHubIcon className="h-4 w-4" /> Open source on GitHub
-              </a>
-              <a href={X_URL} target="_blank" rel="noopener noreferrer me" className="inline-flex items-center gap-2 underline decoration-2 underline-offset-4 hover:text-ink">
-                <XIcon className="h-3.5 w-3.5" /> Follow on X
-              </a>
-            </div>
             <div className="mt-8 hidden flex-wrap gap-4 lg:flex">
               <Float rotate={-8} delay={0.5}><UsdcCoinSticker size={72} /></Float>
               <Float rotate={6} delay={0.6} duration={6}><ReceiptSticker size={72} /></Float>
