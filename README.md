@@ -4,6 +4,8 @@ QRush is a QR and pay-link checkout on Base. Customers pay with crypto; sellers 
 
 [![Live app](https://img.shields.io/badge/app-qrushpay.vercel.app-0052FF)](https://qrushpay.vercel.app)
 [![Contract on Basescan](https://img.shields.io/badge/Basescan-verified%20contract-2ea44f)](https://basescan.org/address/0x6E41C4C993f0C2967eB9F8a3B27E9AD1E0dDb12e)
+[![GitHub](https://img.shields.io/badge/GitHub-comzzy%2Fqrush-181717?logo=github)](https://github.com/comzzy/qrush)
+[![X](https://img.shields.io/badge/X-%40kane__120-000000?logo=x)](https://x.com/kane_120)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 - Live app: https://qrushpay.vercel.app

@@ -4,7 +4,7 @@ import ts from "eslint-config-next/typescript";
 const config = [
   ...next,
   ...ts,
-  { ignores: [".next/**", "next-env.d.ts", "test-results/**", "playwright-report/**", "*.tmp.mjs"] },
+  { ignores: [".next/**", "next-env.d.ts", "test-results/**", "playwright-report/**", "*.tmp.mjs", "public/pdf.worker.min.mjs"] },
 ];
 
 export default config;

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "./Logo";
+import { GITHUB_URL, GitHubIcon, X_URL, XIcon } from "./SocialIcons";
 
 const CHECKOUT = "0x6E41C4C993f0C2967eB9F8a3B27E9AD1E0dDb12e";
 
@@ -18,6 +19,14 @@ export function Footer() {
           >
             Checkout contract {CHECKOUT.slice(0, 8)}…{CHECKOUT.slice(-6)}
           </a>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" aria-label="QRush source code on GitHub" className="grid h-10 w-10 place-items-center rounded-full border-2 border-ink bg-white transition-transform hover:-translate-y-0.5">
+              <GitHubIcon />
+            </a>
+            <a href={X_URL} target="_blank" rel="noopener noreferrer me" aria-label="Follow @kane_120 on X" className="grid h-10 w-10 place-items-center rounded-full border-2 border-ink bg-white transition-transform hover:-translate-y-0.5">
+              <XIcon className="h-4 w-4" />
+            </a>
+          </div>
         </div>
         <FooterCol title="Product" links={[["/features", "Features"], ["/live", "Live payments"], ["/app", "Seller dashboard"]]} />
         <FooterCol title="Learn" links={[["/docs", "Docs"], ["/docs#sellers", "Seller guide"], ["/docs#faq", "FAQ"]]} />
