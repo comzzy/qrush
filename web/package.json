@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@coinbase/wallet-sdk": "^4.4.0",
+    "@noble/curves": "1.9.7",
     "@tanstack/react-query": "^5.105.1",
     "@vercel/blob": "2.8.2",
     "@walletconnect/ethereum-provider": "2.26.0",

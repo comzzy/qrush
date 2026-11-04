@@ -1,6 +1,8 @@
 "use client";
 
-import { createPublicClient, http, numberToHex, type Address, type Hex, hexToString, isHex } from "viem";
+import { p256 } from "@noble/curves/p256";
+import { USDC_ADDRESS } from "./guard";
+import { createPublicClient, http, numberToHex, parseAbi, toHex, type Address, type Hex, hexToString, isHex } from "viem";
 import { base } from "viem/chains";
 import { createBundlerClient, createWebAuthnCredential, entryPoint07Address, toWebAuthnAccount, type SmartAccount } from "viem/account-abstraction";
 import { toKernelSmartAccount } from "permissionless/accounts";
@@ -19,6 +21,31 @@ const pimlico = createPimlicoClient({ transport: http(BUNDLER), entryPoint: { ad
 type Stored = { id: string; publicKey: Hex };
 let account: SmartAccount | null = null;
 
+/**
+ * Every QRush passkey belongs to qrushpay.vercel.app, where the first wallets were made. qrush.online uses the
+ * same passkeys through WebAuthn Related Origin Requests (see /.well-known/webauthn on qrushpay.vercel.app).
+ * Local dev and tests keep their own hostname.
+ */
+export const PASSKEY_RP = "qrushpay.vercel.app";
+const RELATED = ["qrush.online", "www.qrush.online", PASSKEY_RP];
+export const rpId = () => (RELATED.includes(window.location.hostname) ? PASSKEY_RP : window.location.hostname);
+
+/** False when this browser cannot use a qrushpay.vercel.app passkey from another site (e.g. older Firefox). */
+export async function relatedOriginsOk(): Promise<boolean | null> {
+  if (window.location.hostname === rpId()) return true;
+  const pkc = window.PublicKeyCredential as unknown as { getClientCapabilities?: () => Promise<Record<string, boolean>> } | undefined;
+  if (!pkc?.getClientCapabilities) return null;
+  const caps = await pkc.getClientCapabilities().catch(() => null);
+  return caps ? Boolean(caps.relatedOrigins) : null;
+}
+
+/** Which button the user pressed: make a brand-new wallet, or open the one their passkey already owns. */
+let mode: "create" | "login" | null = null;
+export function setPasskeyMode(m: "create" | "login") {
+  mode = m;
+  account = null;
+}
+
 function load(): Stored | null {
   try {
     return JSON.parse(localStorage.getItem(STORE) ?? "null");
@@ -26,20 +53,90 @@ function load(): Stored | null {
     return null;
   }
 }
+const save = (c: Stored) => localStorage.setItem(STORE, JSON.stringify(c));
 
 async function accountFor(cred: Stored) {
-  const owner = toWebAuthnAccount({ credential: cred, rpId: window.location.hostname });
+  const owner = toWebAuthnAccount({ credential: cred, rpId: rpId() });
   return toKernelSmartAccount({ client, owners: [owner], version: "0.3.1", entryPoint: { address: entryPoint07Address, version: "0.7" } });
 }
 
-async function ensure(create: boolean): Promise<SmartAccount | null> {
-  if (account) return account;
-  let cred = load();
-  if (!cred && create) {
-    const c = await createWebAuthnCredential({ name: `QRush ${new Date().toISOString().slice(0, 10)}`, rp: { id: window.location.hostname, name: "QRush" } });
-    cred = { id: c.id, publicKey: c.publicKey };
-    localStorage.setItem(STORE, JSON.stringify(cred));
+/** Kernel address a public key controls. Same key, same address, every time. */
+export async function addressFor(id: string, publicKey: Hex): Promise<Address> {
+  return (await accountFor({ id, publicKey })).address;
+}
+
+const b64uToBuf = (s: string) => Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
+
+/** Ask the device for an existing passkey and work out its public key from the signature (2 possible keys). */
+async function assert(allow?: string): Promise<{ id: string; keys: Hex[] }> {
+  const cred = (await navigator.credentials.get({
+    publicKey: {
+      challenge: crypto.getRandomValues(new Uint8Array(32)),
+      rpId: rpId(),
+      userVerification: "required",
+      allowCredentials: allow ? [{ type: "public-key", id: b64uToBuf(allow) }] : [],
+    },
+  })) as PublicKeyCredential | null;
+  if (!cred) throw new Error("No passkey was picked.");
+  const r = cred.response as AuthenticatorAssertionResponse;
+  const cdHash = new Uint8Array(await crypto.subtle.digest("SHA-256", r.clientDataJSON));
+  const auth = new Uint8Array(r.authenticatorData);
+  const msg = new Uint8Array(await crypto.subtle.digest("SHA-256", new Uint8Array([...auth, ...cdHash])));
+  const sig = p256.Signature.fromDER(new Uint8Array(r.signature));
+  const keys: Hex[] = [];
+  for (const bit of [0, 1]) {
+    try {
+      keys.push(toHex(sig.addRecoveryBit(bit).recoverPublicKey(msg).toRawBytes(false).slice(1)));
+    } catch {
+      /* this bit does not give a valid point */
+    }
   }
+  return { id: cred.id, keys };
+}
+
+const ERC20_BAL = parseAbi(["function balanceOf(address) view returns (uint256)"]);
+async function used(a: Address) {
+  const [code, eth, usdc] = await Promise.all([
+    client.getCode({ address: a }).catch(() => undefined),
+    client.getBalance({ address: a }).catch(() => 0n),
+    client.readContract({ address: USDC_ADDRESS, abi: ERC20_BAL, functionName: "balanceOf", args: [a] }).catch(() => 0n),
+  ]);
+  return Boolean(code && code !== "0x") || eth > 0n || usdc > 0n;
+}
+
+/** Sign in with an existing passkey. Never makes a new wallet. */
+async function login(): Promise<Stored> {
+  const first = await assert();
+  const cached = load();
+  if (cached && cached.id === first.id) return cached;
+  let keys = first.keys;
+  if (keys.length > 1) {
+    // Pick the key whose wallet has been used on Base; if that does not settle it, one more signature does.
+    const flags = await Promise.all(keys.map(async (k) => used(await addressFor(first.id, k))));
+    const hits = keys.filter((_, i) => flags[i]);
+    if (hits.length === 1) keys = hits;
+    else {
+      const second = await assert(first.id);
+      keys = keys.filter((k) => second.keys.includes(k));
+    }
+  }
+  if (keys.length !== 1) throw new Error("Could not read this passkey. Please try again.");
+  const cred = { id: first.id, publicKey: keys[0]! };
+  save(cred);
+  return cred;
+}
+
+async function ensure(request: boolean): Promise<SmartAccount | null> {
+  if (account) return account;
+  let cred: Stored | null = null;
+  if (request && mode === "create") {
+    const c = await createWebAuthnCredential({ name: `QRush ${new Date().toISOString().slice(0, 10)}`, rp: { id: rpId(), name: "QRush" } });
+    cred = { id: c.id, publicKey: c.publicKey };
+    save(cred);
+  } else if (request && mode === "login") cred = await login();
+  else if (request) cred = load() ?? (await login());
+  else cred = load();
+  mode = null;
   if (!cred) return null;
   account = await accountFor(cred);
   return account;

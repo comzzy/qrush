@@ -95,6 +95,10 @@ The site ships an Open Graph / Twitter card image (`web/app/opengraph-image.tsx`
 
 - **USDC or ETH payments.** ETH is swapped to USDC on Uniswap v3 in the same transaction (exact output, with a deadline and a maximum input; unused input is refunded).
 - **Passkey wallet.** Sign in with fingerprint or face recognition. No seed phrase.
+  - Two buttons: **Sign in with my passkey** (opens the wallet your passkey already owns) and **Create a new wallet**.
+  - Same passkey, same wallet address, every time. Sign-in reads the public key back from the passkey signature, so it works after logout or on a fresh browser.
+  - All passkeys belong to `qrushpay.vercel.app`. qrush.online uses them through WebAuthn Related Origins (`https://qrushpay.vercel.app/.well-known/webauthn`), so wallets made on either site open on both. Browsers without that support (e.g. Firefox) get a link to open QRush on qrushpay.vercel.app.
+  - Test: `e2e/passkey.spec.ts` (virtual authenticator).
 - **Split payments.** Divide each payment between several wallets, for example 70% to the seller and 30% to a supplier.
 - **Onchain receipts and loyalty.** Every payment emits a receipt event. Sellers can set a discount for repeat customers in the contract.
 - **Shop setup from a photo.** Upload a photo of a price list to fill in products.
