@@ -7,6 +7,7 @@ import { ScanPanel } from "@/components/ScanPanel";
 import { Reveal } from "@/components/Reveal";
 import { RecentStats } from "@/components/RecentStats";
 import { HeroText } from "@/components/HeroText";
+import { CompareTable, COMPARE_SOURCES } from "@/components/CompareTable";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://qrushpay.vercel.app";
 
@@ -21,7 +22,7 @@ const DIFFERENT = [
   { title: "Any token in, USDC out, one transaction", body: "Buyers pay with ETH or other tokens. Our contract swaps them to USDC through Uniswap v3 and pays you in the same transaction.", bg: "bg-sky/50" },
   { title: "Fits every kind of business", body: "In-person pickup codes, delivery orders, bookings, and digital downloads. Sold PDFs are stamped with the buyer and order code, and every file gets a fingerprint so copies can be traced back to your shop.", bg: "bg-mint/50" },
   { title: "Passkey wallet for buyers", body: "No wallet app? Buyers can create one with their phone's fingerprint or face unlock and pay right away.", bg: "bg-sun/60" },
-  { title: "QR stickers with a verified-shop panel", body: "Print a sticker for your counter. When scanned, buyers see a verified-shop panel, checked onchain, before they pay.", bg: "bg-blush/60" },
+  { title: "QR stickers with a verified-shop panel", body: "Print a sticker for your counter. When scanned, buyers see a verified-shop panel, checked onchain, before they pay, so a swapped sticker is easy to spot.", bg: "bg-blush/60" },
   { title: "Snap your price list", body: "Take a photo of your menu or price list and QRush turns it into products you can sell.", bg: "bg-cream-deep" },
 ];
 
@@ -50,6 +51,14 @@ const SOURCES = [
     label: "Coinbase Help Center",
     href: "https://help.coinbase.com/en/transitioning-from-coinbase-commerce-to-coinbase-business",
   },
+];
+
+const WHO = [
+  { title: "Market stalls and food vendors", body: "Put a QR sticker on the counter. Buyers pay and show a pickup code." },
+  { title: "Delivery businesses", body: "Collect the buyer's address and phone with the order." },
+  { title: "Salons, tutors and service pros", body: "Take bookings and get paid up front." },
+  { title: "Ebook and course sellers", body: "Sell PDFs that are stamped for each buyer." },
+  { title: "Shops with partners or staff", body: "Split every sale automatically between wallets." },
 ];
 
 const TEASERS = [
@@ -186,6 +195,42 @@ export default function Home() {
               <div className={`card h-full p-6 transition-transform hover:-translate-y-1 ${d.bg}`}>
                 <h3 className="text-xl font-bold">{d.title}</h3>
                 <p className="mt-2 text-ink-soft">{d.body}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      {/* Comparison */}
+      <section className="section py-12" id="compare">
+        <Reveal>
+          <span className="pill">Side by side</span>
+          <h2 className="h-display mt-3 text-4xl sm:text-5xl">How QRush compares</h2>
+          <p className="mt-3 max-w-2xl text-ink-soft">Taken from each product&apos;s public docs. A dash means the feature is not listed there.</p>
+        </Reveal>
+        <Reveal delay={0.1}>
+          <CompareTable />
+        </Reveal>
+        <p className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink-soft">
+          Sources:
+          {COMPARE_SOURCES.map((s) => (
+            <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">{s.label} ↗</a>
+          ))}
+        </p>
+      </section>
+
+      {/* Who it's for */}
+      <section className="section py-12" id="who">
+        <Reveal>
+          <span className="pill">Who it&apos;s for</span>
+          <h2 className="h-display mt-3 text-4xl sm:text-5xl">Made for real shops</h2>
+        </Reveal>
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
+          {WHO.map((w, i) => (
+            <Reveal key={w.title} delay={i * 0.06}>
+              <div className="card h-full p-5 transition-transform hover:-translate-y-1 hover:rotate-[0.6deg]">
+                <h3 className="text-lg font-bold">{w.title}</h3>
+                <p className="mt-2 text-sm text-ink-soft">{w.body}</p>
               </div>
             </Reveal>
           ))}

@@ -35,6 +35,35 @@ Coinbase Commerce, Daimo Pay and Request also take crypto payments. QRush is dif
 - **QR stickers** that open a checkout with a verified-shop panel, checked onchain.
 - **Snap your price list:** a photo of a menu or price list becomes products.
 
+### Side-by-side comparison
+
+Taken from each product's public docs (checked November 2026). "—" means the feature is not listed there.
+
+| Feature | QRush | Daimo Pay | Request Network | Coinbase Commerce |
+|---|---|---|---|---|
+| Status | Live on Base | Live | Live | Closed March 31, 2026 |
+| Set up by | Shop owner, no code | Developers (SDK + API key) | Dashboard or API | — |
+| Any token in, stablecoin out | ✓ One transaction (Uniswap v3) | ✓ Any chain, any token | ✓ Cross-chain swap-to-pay | Hundreds of assets |
+| Fee | No platform fee, gas only | Not listed in docs | Protocol fee on every payment | 1% |
+| Needs a Coinbase business account | No | No | No | Replaced by Coinbase Business (US and Singapore only) |
+| Card, bank and local payment methods | No, crypto only | ✓ | — | — |
+| Order types: pickup code, delivery, booking, digital | ✓ | — | — | — |
+| Digital delivery with PDF stamping and file fingerprints | ✓ | — | — | — |
+| QR stickers with an onchain verified-shop panel | ✓ | — | — | — |
+| Photo of a price list turns into products | ✓ | — | — | — |
+| Passkey wallet for buyers | ✓ | — | — | — |
+| Payment splits and onchain loyalty stamps | ✓ | — | — | — |
+
+Sources: [Daimo docs](https://docs.daimo.com/introduction), [Request Network docs](https://docs.request.network/), [Request Network protocol fees](https://docs.request.network/api-features/protocol-fees), [Coinbase Help](https://help.coinbase.com/en/transitioning-from-coinbase-commerce-to-coinbase-business).
+
+## Who it's for
+
+- Market stalls and food vendors: a QR sticker on the counter, buyers show a pickup code.
+- Delivery businesses: collect address and phone with the order.
+- Salons, tutors and service pros: take bookings, paid up front.
+- Ebook and course sellers: PDFs stamped for each buyer.
+- Shops with partners or staff: automatic splits between wallets.
+
 ## Why now
 
 - Sub-Saharan Africa received over $205B in crypto value from July 2024 to June 2025, up about 52% year over year. Nigeria alone received $92.1B, and more of the region's value moves in small transfers than elsewhere ([Chainalysis, Sept 2025](https://www.chainalysis.com/blog/subsaharan-africa-crypto-adoption-2025/)).
